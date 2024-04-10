@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Login.css'; // Import the CSS file
 import './1.css'; //Import the CSS file for standard
 import materImage from './static/MATER.png'; // Import the image file
 
-const Login = ({ handleLogin }) => {
-  const [formData, setFormData] = useState({ username: '', password: '' });
+const Signup = () => {
+  const [formData, setFormData] = useState({ username: '', password: '', confirmPassword: '' });
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
@@ -18,12 +17,17 @@ const Login = ({ handleLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Check if passwords match
+      if (formData.password !== formData.confirmPassword) {
+        throw new Error('Passwords do not match');
+      }
+
       // Get the base URL from the environmental variable
       const baseUrl = process.env.REACT_APP_BASE_URL;
-      // Construct the full URL for the login endpoint
-      const loginUrl = `${baseUrl}/auth/login`;
+      // Construct the full URL for the signup endpoint
+      const signupUrl = `${baseUrl}/auth/signup`;
 
-      const response = await fetch(loginUrl, {
+      const response = await fetch(signupUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,23 +42,14 @@ const Login = ({ handleLogin }) => {
       console.log(responseData);
 
       if (response.ok) {
-        // Store JWT token in local storage
-        localStorage.setItem('jwt', responseData.jwt);
-        
-        // Call the handleLogin function passed from the parent component
-        handleLogin(formData.username);
-        
-        // Set username in local storage
-        localStorage.setItem('username', formData.username);
-        
-        // Redirect to the home page
-        navigate('/home');
+        // Redirect to the login page after successful signup
+        navigate('/login');
       } else {
-        throw new Error('Login failed');
+        throw new Error(responseData.error || 'Signup failed');
       }
     } catch (error) {
-      console.error('Login failed:', error.message);
-      setErrorMessage('Invalid username or password');
+      console.error('Signup failed:', error.message);
+      setErrorMessage(error.message);
     }
   };
 
@@ -64,9 +59,7 @@ const Login = ({ handleLogin }) => {
         MATER
       </h2>
       <img src={materImage} alt="MATER Image" className="center" />
-      <h3>
-        Login
-      </h3>
+      <h3>Signup</h3>
       <form onSubmit={handleSubmit}>
         {/* Input fields for username and password */}
         <input
@@ -75,22 +68,36 @@ const Login = ({ handleLogin }) => {
           value={formData.username}
           onChange={handleChange}
           placeholder="Username"
-        /><br></br>
+        />
+        <br />
         <input
           type="password"
           name="password"
           value={formData.password}
           onChange={handleChange}
           placeholder="Password"
-        /><br></br>
-        <button type="submit" color="white" className="standard-btn">Login</button> {/* Use type="submit" to trigger form submission */}
+        />
+        <br />
+        <input
+          type="password"
+          name="confirmPassword"
+          value={formData.confirmPassword}
+          onChange={handleChange}
+          placeholder="Confirm Password"
+        />
+        <br />
+        <button type="submit" className="standard-btn">
+          Signup
+        </button> {/* Use type="submit" to trigger form submission */}
       </form>
       {errorMessage && <div>{errorMessage}</div>}
 
-        {/* Add Link for Signup */}
-        <Link to="/signup" className="standard-btn">Signup</Link>
+      {/* Link to the login page */}
+      <Link to="/login" className="standard-btn">
+        Go to Login
+      </Link>
     </div>
   );
 };
 
-export default Login;
+export default Signup;
