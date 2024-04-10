@@ -3,58 +3,45 @@ import { Link } from 'react-router-dom';
 import './Header.css'; // Import the CSS file
 import materImage from './static/favicon-16x16.png'; // Import the image file
 
-const Header = ({ isLoggedIn, handleLogout }) => {
+// Header component responsible for rendering the application header
+const Header = ({ isLoggedIn, handleLogout, openAddAssetModal }) => {
   return (
     <div className="header-container">
       <nav>
-        {isLoggedIn ? (
+        {isLoggedIn ? ( // Render different menu items based on user authentication status
           <ul>
+            {/* Link to home page */}
             <li>
-            <Link to="/home" className="icon-link">
-              <div className="icon-container">
-                <img src={materImage} alt="Home Icon" className="icon" />
-                <span>Home</span>
-              </div>
-            </Link>
+              <Link to="/home" className="icon-link">
+                <div className="icon-container">
+                  <img src={materImage} alt="Home" className="icon" />
+                  <span>Home</span>
+                </div>
+              </Link>
             </li>
+            {/* Dropdown menu for assets */}
             <li className="dropdown">
               <span>Assets</span>
               <div className="dropdown-content">
-                <Link to="/add-asset">Add Asset</Link>
+                <span onClick={openAddAssetModal}>Add Asset</span> {/* Button to open the Add Asset modal */}
                 <Link to="/view-assets">View All Assets</Link>
               </div>
             </li>
-            <li className="dropdown">
-              <span>Services</span>
-              <div className="dropdown-content">
-                <Link to="/add-service">Add Service</Link>
-                <Link to="/view-services">View All Services</Link>
-              </div>
-            </li>
-            <li className="dropdown">
-              <span>Calendar</span>
-              <div className="dropdown-content">
-                <Link to="/all-services-calendar">All Services Calendar</Link>
-                <Link to="/not-completed-calendar">Not Completed Calendar</Link>
-                <Link to="/completed-calendar">Completed Calendar</Link>
-              </div>
-            </li>
-            <li>
-              <Link to="/settings">Settings</Link>
-            </li>
+            {/* Menu item for logout */}
             <li>
               <span onClick={handleLogout}>Logout</span>
             </li>
           </ul>
         ) : (
           <ul>
+            {/* Link to login page */}
             <li>
-            <Link to="/" className="icon-link">
-              <div className="icon-container">
-                <img src={materImage} alt="Home Icon" className="icon" />
-                <span>Login</span>
-              </div>
-            </Link>
+              <Link to="/" className="icon-link">
+                <div className="icon-container">
+                  <img src={materImage} alt="Home" className="icon" />
+                  <span>Login</span>
+                </div>
+              </Link>
             </li>
           </ul>
         )}

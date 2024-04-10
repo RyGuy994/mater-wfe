@@ -58,7 +58,7 @@ const Signup = () => {
       <h2 className="cool-text" data-text="MATER">
         MATER
       </h2>
-      <img src={materImage} alt="MATER Image" className="center" />
+      <img src={materImage} alt="MATER" className="center" />
       <h3>Signup</h3>
       <form onSubmit={handleSubmit}>
         {/* Input fields for username and password */}
