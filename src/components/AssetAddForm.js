@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import './AssetForm.css';
+import './1.css';
 
 // AssetForm component responsible for rendering the form to add assets
 const AssetForm = ({ onSubmit }) => {
@@ -85,7 +87,7 @@ const AssetForm = ({ onSubmit }) => {
         onChange={handleChange}
       />
       {/* Button to submit the form */}
-      <button type="submit">Submit</button>
+      <button className="standard-btn" type="submit">Submit</button>
     </form>
   );
 };

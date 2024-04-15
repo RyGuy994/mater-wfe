@@ -23,7 +23,7 @@ const Header = ({ isLoggedIn, handleLogout, openAddAssetModal }) => {
             <li className="dropdown">
               <span>Assets</span>
               <div className="dropdown-content">
-                <span onClick={openAddAssetModal}>Add Asset</span> {/* Button to open the Add Asset modal */}
+                <span onClick={() => { console.log("Add Asset button clicked"); openAddAssetModal(); }}>Add Asset</span>
                 <Link to="/view-assets">View All Assets</Link>
               </div>
             </li>

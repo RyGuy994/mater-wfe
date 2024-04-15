@@ -54,6 +54,7 @@ nav ul li a:hover,
 nav ul li span:hover,
 nav ul li button:hover {
   background-color: #111; /* Darken background color on hover */
+  border-radius: 10px; /* Add border radius to make buttons rounded */
 }
 
 /* Dropdown styles */

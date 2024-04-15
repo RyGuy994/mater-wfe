@@ -1,32 +1,22 @@
-// AssetAddModal.js
-import React, { useState } from 'react';
-import Modal from './Modal.js'; // Import Modal component
-import AssetForm from './AssetAddForm.js'; // Import updated Asset_AddForm component
+import React from 'react';
+import Modal from './Modal.js';
+import AssetForm from './AssetAddForm.js';
 
-const AssetAddModal = ({ onAddAsset }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const openModal = () => {
-    setIsOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsOpen(false);
-  };
-
+const AssetAddModal = ({ isOpen, onAddAsset, onClose }) => {
   const handleAddAsset = (assetData) => {
-    // Call the onAddAsset function passed from the parent component
+    console.log("Adding asset:", assetData); // Log the asset data before adding
     onAddAsset(assetData);
-    // Close the modal after adding the asset
-    closeModal();
+    onClose(); // Close the modal after adding the asset
   };
+
+  console.log("isOpen:", isOpen); // Log the value of isOpen
 
   return (
     <>
-      <button onClick={openModal}>Add Asset</button>
+      <button onClick={onClose}>Close Modal</button>
+      {/* Render the modal based on the isOpen prop */}
       {isOpen && (
-        <Modal onClose={closeModal}>
-          {/* Render the Asset_AddForm component with the onSubmit handler */}
+        <Modal onClose={onClose}>
           <AssetForm onSubmit={handleAddAsset} />
         </Modal>
       )}
