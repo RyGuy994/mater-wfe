@@ -1,37 +1,36 @@
 /* Modal container */
 .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Positioning context */
-    z-index: 1; /* Make sure it's on top of other elements */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scrolling if content is too tall */
-    background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
-  }
-  
-  /* Modal content */
-  .modal-content {
-    background-color: #fefefe; /* White background */
-    margin: 15% auto; /* Center the modal vertically and horizontally */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%; /* Set width of the modal */
-  }
-  
-  /* Close button */
-  .close {
-    color: #aaa; /* Light gray */
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-  }
-  
-  .close:hover,
-  .close:focus {
-    color: black; /* Change color on hover */
-    text-decoration: none; /* Remove underline */
-    cursor: pointer; /* Change cursor to pointer */
-  }
-  
+  display: none; /* Hidden by default */
+  position: fixed; /* Positioning context */
+  z-index: 1; /* Make sure it's on top of other elements */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scrolling if content is too tall */
+  background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
+}
+
+/* Modal content */
+.modal-content {
+  background-color: #fefefe; /* White background */
+  margin: 15% auto; /* Center the modal vertically and horizontally */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Set width of the modal */
+}
+
+/* Close button */
+.close {
+  color: #aaa; /* Light gray */
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black; /* Change color on hover */
+  text-decoration: none; /* Remove underline */
+  cursor: pointer; /* Change cursor to pointer */
+}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Modal from './Modal.js';
 import AssetForm from './AssetAddForm.js';
 
@@ -11,15 +11,23 @@ const AssetAddModal = ({ isOpen, onAddAsset, onClose }) => {
 
   console.log("isOpen:", isOpen); // Log the value of isOpen
 
+  // Log when the modal mounts and unmounts
+  useEffect(() => {
+    console.log(`Modal ${isOpen ? 'opened' : 'closed'}`);
+    return () => {
+      console.log('Modal unmounted');
+    };
+  }, [isOpen]);
+
   return (
     <>
       <button onClick={onClose}>Close Modal</button>
       {/* Render the modal based on the isOpen prop */}
-      {isOpen && (
+      {isOpen ? (
         <Modal onClose={onClose}>
           <AssetForm onSubmit={handleAddAsset} />
         </Modal>
-      )}
+      ) : null}
     </>
   );
 };
