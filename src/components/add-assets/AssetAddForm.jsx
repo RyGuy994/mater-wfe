@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './AssetForm.css';
-import './1.css';
+import '../1.css';
 
 // AssetForm component responsible for rendering the form to add assets
 const AssetForm = ({ onSubmit }) => {
