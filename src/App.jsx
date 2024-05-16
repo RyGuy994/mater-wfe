@@ -11,6 +11,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
+  const [isModalOpen, setModalOpen] = useState(false);
 
   const handleLogin = (username) => {
     setIsLoggedIn(true);
@@ -25,23 +26,26 @@ function App() {
     localStorage.removeItem('username');
   };
 
+  const openAddAssetModal = () => {
+    setModalOpen(true);
+  };
+
+  const closeAddAssetModal = () => {
+    setModalOpen(false);
+  };
 
   return (
     <Router>
       <div className="App">
-        <Header isLoggedIn={isLoggedIn} handleLogout={handleLogout} handleLogin={handleLogin} />
+        <Header isLoggedIn={isLoggedIn} handleLogout={handleLogout} openAddAssetModal={openAddAssetModal} />
         <Routes>
           <Route path="/home" element={isLoggedIn ? <Home username={username} /> : <Navigate to="/" />} />
-          <Route
-            path="/add-asset"
-            element={
-              <AssetAddModal/>
-            }
-          />
+          <Route path="/add-asset" element={<AssetAddModal onClose={closeAddAssetModal} />} />
           <Route path="/login" element={<Login handleLogin={handleLogin} setError={setError} />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/" element={<Login handleLogin={handleLogin} setError={setError} />} />
         </Routes>
+        {isModalOpen && <AssetAddModal onClose={closeAddAssetModal} />}
         {error && <div className="error">{error}</div>}
       </div>
     </Router>

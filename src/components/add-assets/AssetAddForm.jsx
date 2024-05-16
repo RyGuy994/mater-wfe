@@ -1,95 +1,101 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './AssetForm.css';
 import '../1.css';
 
-// AssetForm component responsible for rendering the form to add assets
-const AssetForm = ({ onSubmit }) => {
-  const [assetData, setAssetData] = useState({ // State to hold asset data
-    name: '', // Asset name
-    asset_sn: '', // Asset serial number
-    description: '', // Asset description
-    acquired_date: '', // Asset acquisition date
-    asset_type: '', // Asset type
-    asset_status: '', // Asset status
-    asset_number_tracker: '', // Asset number tracker
+const AddAssetForm = () => {
+  const [assetData, setAssetData] = useState({
+    name: '',
+    asset_sn: '',
+    description: '',
+    acquired_date: '',
+    image: null, // Add image property to state
   });
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
-  // Function to handle changes in input fields
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setAssetData({ ...assetData, [name]: value }); // Update the corresponding state value
+    const { name, value, type } = e.target;
+    // For file inputs, access the files property
+    const newValue = type === 'file' ? e.target.files[0] : value;
+    setAssetData({ ...assetData, [name]: newValue });
   };
 
-  // Function to handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(assetData); // Pass the asset data to the onSubmit function
+
+    try {
+      const formData = new FormData();
+      for (const key in assetData) {
+        formData.append(key, assetData[key]);
+      }
+
+      // Send form data using fetch API
+      const response = await fetch('/assets/asset_add', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const responseData = await response.json();
+
+      if (response.ok) {
+        console.log('Asset added successfully:', responseData.message);
+        navigate('/view-assets');
+      } else {
+        throw new Error(responseData.error || 'Failed to add asset');
+      }
+    } catch (error) {
+      console.error('Failed to add asset:', error.message);
+      setErrorMessage('Failed to add asset');
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      {/* Input field for asset name */}
-      <input
-        type="text"
-        name="name"
-        placeholder="Asset Name"
-        value={assetData.name}
-        onChange={handleChange}
-        required
-      />
-      {/* Input field for asset serial number */}
-      <input
-        type="text"
-        name="asset_sn"
-        placeholder="Asset Serial Number"
-        value={assetData.asset_sn}
-        onChange={handleChange}
-        required
-      />
-      {/* Input field for asset description */}
-      <input
-        type="text"
-        name="description"
-        placeholder="Asset Description"
-        value={assetData.description}
-        onChange={handleChange}
-      />
-      {/* Input field for asset acquisition date */}
-      <input
-        type="date"
-        name="acquired_date"
-        placeholder="Acquired Date"
-        value={assetData.acquired_date}
-        onChange={handleChange}
-      />
-      {/* Input field for asset type */}
-      <input
-        type="text"
-        name="asset_type"
-        placeholder="Asset Type"
-        value={assetData.asset_type}
-        onChange={handleChange}
-      />
-      {/* Input field for asset status */}
-      <input
-        type="text"
-        name="asset_status"
-        placeholder="Asset Status"
-        value={assetData.asset_status}
-        onChange={handleChange}
-      />
-      {/* Input field for asset number tracker */}
-      <input
-        type="number"
-        name="asset_number_tracker"
-        placeholder="Asset Number Tracker"
-        value={assetData.asset_number_tracker}
-        onChange={handleChange}
-      />
-      {/* Button to submit the form */}
-      <button className="standard-btn" type="submit">Submit</button>
-    </form>
+    <div>
+      <h3>Add New Asset</h3>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          name="name"
+          placeholder="Asset Name"
+          value={assetData.name}
+          onChange={handleChange}
+          required
+        /><br />
+        <input
+          type="text"
+          name="asset_sn"
+          placeholder="Asset Serial Number"
+          value={assetData.asset_sn}
+          onChange={handleChange}
+          required
+        /><br />
+        <input
+          type="text"
+          name="description"
+          placeholder="Asset Description"
+          value={assetData.description}
+          onChange={handleChange}
+        /><br />
+        <input
+          type="date"
+          name="acquired_date"
+          placeholder="Acquired Date"
+          value={assetData.acquired_date}
+          onChange={handleChange}
+        /><br />
+        {/* Add input for image upload */}
+        <input
+          type="file"
+          name="image"
+          onChange={handleChange}
+          accept="image/*" // Allow only image files
+        /><br />
+        <button type="submit" className="standard-btn">Submit</button>
+      </form>
+      {errorMessage && <div>{errorMessage}</div>}
+    </div>
   );
 };
 
-export default AssetForm;
+export default AddAssetForm;

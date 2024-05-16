@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import './Login.css'; // Import the CSS file
-import './1.css'; //Import the CSS file for standard
+import './1.css'; // Import the CSS file for standard
 import materImage from './static/MATER.png'; // Import the image file
 
 const Login = ({ handleLogin }) => {
@@ -19,7 +19,12 @@ const Login = ({ handleLogin }) => {
     e.preventDefault();
     try {
       // Get the base URL from the environmental variable
-      const baseUrl = process.env.REACT_APP_BASE_URL;
+      const baseUrl = import.meta.env.VITE_BASE_URL;
+      console.log('VITE_BASE_URL:', baseUrl); // Add this line for debugging
+      if (!baseUrl) {
+        throw new Error('VITE_BASE_URL is not defined');
+      }
+
       // Construct the full URL for the login endpoint
       const loginUrl = `${baseUrl}/auth/login`;
 
@@ -50,7 +55,7 @@ const Login = ({ handleLogin }) => {
         // Redirect to the home page
         navigate('/home');
       } else {
-        throw new Error('Login failed');
+        throw new Error(responseData.message || 'Login failed');
       }
     } catch (error) {
       console.error('Login failed:', error.message);
@@ -64,31 +69,26 @@ const Login = ({ handleLogin }) => {
         MATER
       </h2>
       <img src={materImage} alt="MATER" className="center" />
-      <h3>
-        Login
-      </h3>
+      <h3>Login</h3>
       <form onSubmit={handleSubmit}>
-        {/* Input fields for username and password */}
         <input
           type="text"
           name="username"
           value={formData.username}
           onChange={handleChange}
           placeholder="Username"
-        /><br></br>
+        /><br />
         <input
           type="password"
           name="password"
           value={formData.password}
           onChange={handleChange}
           placeholder="Password"
-        /><br></br>
-        <button type="submit" color="white" className="standard-btn">Login</button> {/* Use type="submit" to trigger form submission */}
+        /><br />
+        <button type="submit" className="standard-btn">Login</button>
       </form>
       {errorMessage && <div>{errorMessage}</div>}
-
-        {/* Add Link for Signup */}
-        <Link to="/signup" className="standard-btn">Signup</Link>
+      <Link to="/signup" className="standard-btn">Signup</Link>
     </div>
   );
 };
