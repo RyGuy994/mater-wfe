@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Login.css'; // Import the CSS file
-import './1.css'; //Import the CSS file for standard
+import './1.css'; // Import the CSS file for standard
 import materImage from './static/MATER.png'; // Import the image file
 
 const Signup = () => {
@@ -23,7 +23,7 @@ const Signup = () => {
       }
 
       // Get the base URL from the environmental variable
-      const baseUrl = process.env.REACT_APP_BASE_URL;
+      const baseUrl = import.meta.env.VITE_BASE_URL;
       // Construct the full URL for the signup endpoint
       const signupUrl = `${baseUrl}/auth/signup`;
 
@@ -88,7 +88,7 @@ const Signup = () => {
         <br />
         <button type="submit" className="standard-btn">
           Signup
-        </button> {/* Use type="submit" to trigger form submission */}
+        </button>
       </form>
       {errorMessage && <div>{errorMessage}</div>}
 
