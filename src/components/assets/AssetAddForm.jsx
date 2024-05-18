@@ -71,7 +71,7 @@ const AddAssetForm = () => {
           });
           setImagePreview(null);
         } else {
-          navigate('/assets-all');
+          navigate('/assets_all');
         }
       } else {
         throw new Error(responseData.error || 'Failed to add asset');
@@ -116,30 +116,33 @@ const AddAssetForm = () => {
           value={assetData.acquired_date}
           onChange={handleChange}
         /><br />
-        <select
-          name="asset_status"
-          value={assetData.asset_status}
-          onChange={handleChange}
-          required
-        >
-          <option value="Ready">Ready</option>
-          <option value="Needs Attention">Needs Attention</option>
-          <option value="Sold">Sold</option>
-        </select><br />
-        <input
-          type="file"
-          name="image"
-          className="standard-btn"
-          onChange={handleChange}
-          accept="image/*"
-        /><br />
-        {imagePreview && (
-          <div id="image-preview">
-            <img 
-              src={imagePreview} 
-              alt="Image Preview" 
-              style={{ maxWidth: '200px', maxHeight: '200px', border: '3px solid green', marginBottom: '10px' }} 
-            />
+      <label htmlFor="asset_status">Asset Status:</label>
+      <br />
+      <select
+        name="asset_status"
+        value={assetData.asset_status}
+        onChange={handleChange}
+        required
+      >
+        <option value="Ready">Ready</option>
+        <option value="Needs Attention">Needs Attention</option>
+        <option value="Sold">Sold</option>
+      </select><br />
+      <label htmlFor="image">Asset Image:</label>
+      <input
+        type="file"
+        name="image"
+        className="standard-btn"
+        onChange={handleChange}
+        accept="image/*"
+      /><br />
+      {imagePreview && (
+        <div id="image-preview">
+          <img 
+            src={imagePreview} 
+            alt="Image Preview" 
+            style={{ maxWidth: '200px', maxHeight: '200px', border: '3px solid green', marginBottom: '10px' }} 
+          />
           </div>
         )}
         <button type="submit" className="standard-btn">Submit</button>

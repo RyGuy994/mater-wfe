@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Header from './components/Header';
 import Home from './components/Home';
 import Login from './components/Login';
-import AssetAddModal from './components/add-assets/AssetAddModal';
+import AssetAddModal from './components/assets/AssetAddModal';
 import Signup from './components/Signup';
 import './App.css';
 
@@ -40,7 +40,7 @@ function App() {
         <Header isLoggedIn={isLoggedIn} handleLogout={handleLogout} openAddAssetModal={openAddAssetModal} />
         <Routes>
           <Route path="/home" element={isLoggedIn ? <Home username={username} /> : <Navigate to="/" />} />
-          <Route path="/add-asset" element={<AssetAddModal onClose={closeAddAssetModal} />} />
+          <Route path="/assets" element={<AssetAddModal onClose={closeAddAssetModal} />} />
           <Route path="/login" element={<Login handleLogin={handleLogin} setError={setError} />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/" element={<Login handleLogin={handleLogin} setError={setError} />} />
