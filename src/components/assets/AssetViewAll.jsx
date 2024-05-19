@@ -38,6 +38,7 @@ const AssetViewAll = () => {
             <p>{asset.description}</p>
             <p>Serial Number: {asset.asset_sn}</p>
             <p>Acquired Date: {asset.acquired_date}</p>
+            <p>Status: {asset.asset_status}</p>
             {asset.image_path && <img src={asset.image_path} alt={asset.name} />}
           </li>
         ))}
