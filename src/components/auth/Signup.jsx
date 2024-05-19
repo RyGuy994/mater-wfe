@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Login.css'; // Import the CSS file
-import './1.css'; // Import the CSS file for standard
-import materImage from './static/MATER.png'; // Import the image file
+import '../common/common.css'; // Import the CSS file for standard
+import materImage from '../static/MATER.png'; // Import the image file
 
 const Signup = () => {
   const [formData, setFormData] = useState({ username: '', password: '', confirmPassword: '' });

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Header.css';
-import materImage from './static/favicon-16x16.png';
+import materImage from '../static/favicon-16x16.png';
 
 const Header = ({ isLoggedIn, handleLogout, openAddAssetModal }) => {
   return (
@@ -21,7 +21,7 @@ const Header = ({ isLoggedIn, handleLogout, openAddAssetModal }) => {
               <span>Assets</span>
               <div className="dropdown-content">
                 <span onClick={() => { console.log("Add Asset button clicked"); openAddAssetModal(); }}>Add Asset</span>
-                <Link to="/view-assets">View All Assets</Link>
+                <Link to="/assets-view-all">View All Assets</Link>
               </div>
             </li>
             <li>

@@ -1,10 +1,12 @@
+// src/App.jsx
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Header from './components/Header';
+import Header from './components/common/Header';
 import Home from './components/Home';
-import Login from './components/Login';
+import Login from './components/auth/Login';
 import AssetAddModal from './components/assets/AssetAddModal';
-import Signup from './components/Signup';
+import AssetViewAll from './components/assets/AssetViewAll';
+import Signup from './components/auth/Signup';
 import './App.css';
 
 function App() {
@@ -41,6 +43,7 @@ function App() {
         <Routes>
           <Route path="/home" element={isLoggedIn ? <Home username={username} /> : <Navigate to="/" />} />
           <Route path="/assets" element={<AssetAddModal onClose={closeAddAssetModal} />} />
+          <Route path="/assets-view-all" element={<AssetViewAll />} />
           <Route path="/login" element={<Login handleLogin={handleLogin} setError={setError} />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/" element={<Login handleLogin={handleLogin} setError={setError} />} />

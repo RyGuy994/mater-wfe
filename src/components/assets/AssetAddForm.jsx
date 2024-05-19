@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AssetForm.css';
-import '../1.css';
+import '../common/common.css';
 
 const AddAssetForm = () => {
   const currentDate = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
@@ -12,7 +12,7 @@ const AddAssetForm = () => {
     description: '',
     acquired_date: currentDate, // Set acquired_date to today's date
     image: null,
-    asset_status: 'Ready'  
+    asset_status: 'Ready'
   });
   const [errorMessage, setErrorMessage] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
@@ -38,21 +38,24 @@ const AddAssetForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
+    const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
+    const requestData = { ...assetData, jwt: jwtToken }; // Include JWT in request body
+
     try {
       const baseUrl = import.meta.env.VITE_BASE_URL;
       const AddAssetUrl = `${baseUrl}/assets/asset_add`;
-  
+
       const response = await fetch(AddAssetUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(assetData),
+        body: JSON.stringify(requestData),
       });
-  
+
       const responseData = await response.json();
-  
+
       if (response.ok) {
         if (responseData.message) {
           console.log('Asset added successfully:', responseData.message);
@@ -71,7 +74,7 @@ const AddAssetForm = () => {
           });
           setImagePreview(null);
         } else {
-          navigate('/assets_all');
+          navigate('/assets-view-all');
         }
       } else {
         throw new Error(responseData.error || 'Failed to add asset');
