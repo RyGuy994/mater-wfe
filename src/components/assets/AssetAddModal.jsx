@@ -29,10 +29,7 @@ const AssetAddModal = ({ onClose }) => {
         <Typography id="modal-modal-title" variant="h6" component="h2">
           Add Asset
         </Typography>
-        <AssetAddForm onSubmit={(data) => {
-          console.log('Asset data:', data);
-          onClose(); // Close the modal after submission
-        }} />
+        <AssetAddForm onClose={onClose} />
         <Button className="standard-btn" onClick={onClose}>Close</Button>
       </Box>
     </Modal>

@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AssetForm.css';
 import '../common/common.css';
+import ConfirmationModal from '../common/ConfirmationModal';
 
-const AddAssetForm = () => {
+const AssetAddForm = ({ onClose }) => {
   const currentDate = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
 
   const [assetData, setAssetData] = useState({
@@ -16,6 +17,7 @@ const AddAssetForm = () => {
   });
   const [errorMessage, setErrorMessage] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -57,25 +59,8 @@ const AddAssetForm = () => {
       const responseData = await response.json();
 
       if (response.ok) {
-        if (responseData.message) {
-          console.log('Asset added successfully:', responseData.message);
-        } else {
-          console.log('Asset added successfully');
-        }
-        const addAnother = window.confirm('Do you want to add another asset?');
-        if (addAnother) {
-          setAssetData({
-            name: '',
-            asset_sn: '',
-            description: '',
-            acquired_date: currentDate,
-            image: null,
-            asset_status: 'Ready'
-          });
-          setImagePreview(null);
-        } else {
-          navigate('/assets-view-all');
-        }
+        console.log('Asset added successfully:', responseData.message || 'Asset added successfully');
+        setShowConfirmation(true);
       } else {
         throw new Error(responseData.error || 'Failed to add asset');
       }
@@ -84,7 +69,26 @@ const AddAssetForm = () => {
       setErrorMessage('Failed to add asset');
     }
   };
-  
+
+  const handleConfirm = () => {
+    setShowConfirmation(false);
+    setAssetData({
+      name: '',
+      asset_sn: '',
+      description: '',
+      acquired_date: currentDate,
+      image: null,
+      asset_status: 'Ready'
+    });
+    setImagePreview(null);
+  };
+
+  const handleCancel = () => {
+    setShowConfirmation(false);
+    onClose(); // Close the modal
+    navigate('/assets-view-all');
+  };
+
   return (
     <div>
       <h3>Add New Asset</h3>
@@ -119,41 +123,47 @@ const AddAssetForm = () => {
           value={assetData.acquired_date}
           onChange={handleChange}
         /><br />
-      <label htmlFor="asset_status">Asset Status:</label>
-      <br />
-      <select
-        name="asset_status"
-        value={assetData.asset_status}
-        onChange={handleChange}
-        required
-      >
-        <option value="Ready">Ready</option>
-        <option value="Needs Attention">Needs Attention</option>
-        <option value="Sold">Sold</option>
-      </select><br />
-      <label htmlFor="image">Asset Image:</label>
-      <input
-        type="file"
-        name="image"
-        className="standard-btn"
-        onChange={handleChange}
-        accept="image/*"
-      /><br />
-      {imagePreview && (
-        <div id="image-preview">
-          <img 
-            src={imagePreview} 
-            alt="Image Preview" 
-            style={{ maxWidth: '200px', maxHeight: '200px', border: '3px solid green', marginBottom: '10px' }} 
-          />
+        <label htmlFor="asset_status">Asset Status:</label>
+        <br />
+        <select
+          name="asset_status"
+          value={assetData.asset_status}
+          onChange={handleChange}
+          required
+        >
+          <option value="Ready">Ready</option>
+          <option value="Needs Attention">Needs Attention</option>
+          <option value="Sold">Sold</option>
+        </select><br />
+        <label htmlFor="image">Asset Image:</label>
+        <input
+          type="file"
+          name="image"
+          className="standard-btn"
+          onChange={handleChange}
+          accept="image/*"
+        /><br />
+        {imagePreview && (
+          <div id="image-preview">
+            <img
+              src={imagePreview}
+              alt="Image Preview"
+              style={{ maxWidth: '200px', maxHeight: '200px', border: '3px solid green', marginBottom: '10px' }}
+            />
           </div>
         )}
         <button type="submit" className="standard-btn">Submit</button>
       </form>
       {errorMessage && <div>{errorMessage}</div>}
+      {showConfirmation && (
+        <ConfirmationModal
+          message="Do you want to add another asset?"
+          onConfirm={handleConfirm}
+          onCancel={handleCancel}
+        />
+      )}
     </div>
   );
-  
 };
 
-export default AddAssetForm;
+export default AssetAddForm;

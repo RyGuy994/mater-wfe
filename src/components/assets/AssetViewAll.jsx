@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useTable, useSortBy, useFilters } from 'react-table';
 import { matchSorter } from 'match-sorter';
+import '../common/common.css';
 
 const DefaultColumnFilter = ({
   column: { filterValue, preFilteredRows, setFilter },
@@ -33,22 +34,32 @@ const AssetTable = ({ assets }) => {
       {
         Header: 'Name',
         accessor: 'name',
+        Filter: DefaultColumnFilter,
+        filter: 'fuzzyText',
       },
       {
         Header: 'Description',
         accessor: 'description',
+        Filter: DefaultColumnFilter,
+        filter: 'fuzzyText',
       },
       {
         Header: 'Serial Number',
         accessor: 'asset_sn',
+        Filter: DefaultColumnFilter,
+        filter: 'fuzzyText',
       },
       {
         Header: 'Acquired Date',
         accessor: 'acquired_date',
+        Filter: DefaultColumnFilter,
+        filter: 'fuzzyText',
       },
       {
         Header: 'Status',
         accessor: 'asset_status',
+        Filter: DefaultColumnFilter,
+        filter: 'fuzzyText',
       },
       {
         Header: 'Image',
@@ -88,17 +99,17 @@ const AssetTable = ({ assets }) => {
   );
 
   return (
-    <table {...getTableProps()} style={{ border: 'solid 1px black' }}>
+    <table {...getTableProps()} className="standard-table">
       <thead>
         {headerGroups.map(headerGroup => (
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map(column => (
-              <th {...column.getHeaderProps(column.getSortByToggleProps())} style={{ borderBottom: 'solid 3px red', background: 'aliceblue', color: 'black', fontWeight: 'bold' }}>
-                {column.render('Header')}
-                <div>{column.canFilter ? column.render('Filter') : null}</div>
-                <span>
+              <th {...column.getHeaderProps()} style={{ position: 'relative' }}>
+                <div {...column.getSortByToggleProps()} style={{ display: 'inline-block', cursor: 'pointer' }}>
+                  {column.render('Header')}
                   {column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}
-                </span>
+                </div>
+                <div>{column.canFilter ? column.render('Filter') : null}</div>
               </th>
             ))}
           </tr>
@@ -150,9 +161,11 @@ const AssetViewAll = () => {
   }, []);
 
   return (
-    <div>
+    <div id="content">
+      <c>
       <h3>All Assets</h3>
       <AssetTable assets={assets} />
+      </c>
     </div>
   );
 };
