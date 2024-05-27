@@ -1,8 +1,8 @@
-// src/components/assets/AssetViewAll.jsx
 import React, { useEffect, useState, useMemo } from 'react';
 import { useTable, useSortBy, useFilters } from 'react-table';
 import { matchSorter } from 'match-sorter';
 import '../common/common.css';
+import AssetEditModal from './AssetEditModal'; // Import the edit modal component
 
 const DefaultColumnFilter = ({
   column: { filterValue, preFilteredRows, setFilter },
@@ -26,7 +26,7 @@ const fuzzyTextFilterFn = (rows, id, filterValue) => {
 
 fuzzyTextFilterFn.autoRemove = val => !val;
 
-const AssetTable = ({ assets }) => {
+const AssetTable = ({ assets, openEditModal }) => {
   const data = useMemo(() => assets, [assets]);
 
   const columns = useMemo(
@@ -65,6 +65,14 @@ const AssetTable = ({ assets }) => {
         Header: 'Image',
         accessor: 'image_path',
         Cell: ({ cell: { value } }) => (value ? <img src={value} alt="Asset" style={{ width: '50px' }} /> : null),
+        disableFilters: true,
+        disableSortBy: true,
+      },
+      {
+        Header: 'Actions',
+        Cell: ({ row }) => (
+          <button onClick={() => openEditModal(row.original)}>Edit</button>
+        ),
         disableFilters: true,
         disableSortBy: true,
       },
@@ -135,37 +143,76 @@ const AssetTable = ({ assets }) => {
 
 const AssetViewAll = () => {
   const [assets, setAssets] = useState([]);
+  const [editAsset, setEditAsset] = useState(null);
+
+  const fetchAssets = async () => {
+    const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
+    const baseUrl = import.meta.env.VITE_BASE_URL;
+
+    const response = await fetch(`${baseUrl}/assets/asset_all`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ jwt: jwtToken }) // Send JWT in the body
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      setAssets(data);
+    } else {
+      console.error('Failed to fetch assets:', data.error);
+    }
+  };
 
   useEffect(() => {
-    const fetchAssets = async () => {
-      const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
-      const baseUrl = import.meta.env.VITE_BASE_URL;
-
-      const response = await fetch(`${baseUrl}/assets/asset_all`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ jwt: jwtToken }) // Send JWT in the body
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        setAssets(data);
-      } else {
-        console.error('Failed to fetch assets:', data.error);
-      }
-    };
-
     fetchAssets();
   }, []);
 
+  const openEditModal = (asset) => {
+    setEditAsset(asset);
+  };
+
+  const closeEditModal = () => {
+    setEditAsset(null);
+  };
+
+  const handleEditSubmit = async (updatedAsset) => {
+    const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
+    const baseUrl = import.meta.env.VITE_BASE_URL;
+  
+    const response = await fetch(`${baseUrl}/assets/asset_edit/${updatedAsset.id}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ...updatedAsset,
+        jwt: jwtToken // Include JWT token
+      })
+    });
+  
+    const data = await response.json();
+    if (response.ok) {
+      await fetchAssets(); // Re-fetch the assets data after the edit
+      closeEditModal();
+    } else {
+      console.error('Failed to update asset:', data.error);
+    }
+  };
+
   return (
     <div id="content">
-      <c>
       <h3>All Assets</h3>
-      <AssetTable assets={assets} />
-      </c>
+      <AssetTable assets={assets} openEditModal={openEditModal} />
+      {editAsset && (
+        <AssetEditModal
+          asset={editAsset}
+          onClose={closeEditModal}
+          onSubmit={handleEditSubmit}
+          fetchAssets={fetchAssets}
+        />
+      )}
     </div>
   );
 };

@@ -1,38 +1,104 @@
 import React, { useState, useEffect } from 'react';
 import './AssetForm.css';
 import '../common/common.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AssetEditForm = ({ asset, onSubmit, onClose }) => {
-  const [assetData, setAssetData] = useState(asset);
+  const [assetData, setAssetData] = useState({
+    name: '',
+    asset_sn: '',
+    description: '',
+    acquired_date: '',
+    asset_status: '',
+    image: null,
+  });
   const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
-    if (asset.image) {
-      setImagePreview(asset.image);
+    if (asset) {
+      setAssetData({
+        name: asset.name || '',
+        asset_sn: asset.asset_sn || '',
+        description: asset.description || '',
+        acquired_date: asset.acquired_date || '',
+        asset_status: asset.asset_status || 'Ready',
+        image: asset.image_path || null,
+      });
+      if (asset.image_path) {
+        setImagePreview(asset.image_path);
+      }
     }
   }, [asset]);
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
-    const newValue = type === 'file' ? (e.target.files[0] || null) : value;
-    setAssetData({ ...assetData, [name]: newValue });
-
     if (type === 'file') {
-      if (e.target.files[0]) {
+      const file = e.target.files[0] || null;
+      setAssetData({ ...assetData, image: file });
+
+      if (file) {
         const reader = new FileReader();
         reader.onloadend = () => {
           setImagePreview(reader.result);
         };
-        reader.readAsDataURL(e.target.files[0]);
+        reader.readAsDataURL(file);
       } else {
         setImagePreview(null);
       }
+    } else {
+      setAssetData({ ...assetData, [name]: value });
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(assetData);
+
+    const assetToSubmit = { ...assetData };
+
+    // If there's a new image file, convert it to base64
+    if (assetData.image && typeof assetData.image !== 'string') {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        assetToSubmit.image = reader.result.split(',')[1]; // Get the base64 string without the prefix
+        await updateAsset(assetToSubmit);
+      };
+      reader.readAsDataURL(assetData.image);
+    } else {
+      await updateAsset(assetToSubmit);
+    }
+  };
+
+  const updateAsset = async (assetToSubmit) => {
+    try {
+      const baseUrl = import.meta.env.VITE_BASE_URL;
+      const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
+
+      // Include the JWT token in the request body
+      const response = await fetch(`${baseUrl}/assets/asset_edit/${asset.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...assetToSubmit, jwt: jwtToken }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${result.error}`);
+      }
+
+      onSubmit(result);
+      toast.success('Asset updated successfully!');
+      // Optionally, delay the reload to give time for the toast to show
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } catch (error) {
+      console.error('Error updating the asset:', error);
+      toast.error('Failed to update asset. Please try again.');
+    }
   };
 
   return (
@@ -68,6 +134,7 @@ const AssetEditForm = ({ asset, onSubmit, onClose }) => {
           placeholder="Acquired Date"
           value={assetData.acquired_date}
           onChange={handleChange}
+          required
         /><br />
         <label htmlFor="asset_status">Asset Status:</label>
         <br />
@@ -101,6 +168,7 @@ const AssetEditForm = ({ asset, onSubmit, onClose }) => {
         <button type="submit" className="standard-btn">Save</button>
         <button type="button" className="standard-btn" onClick={onClose}>Cancel</button>
       </form>
+      <ToastContainer />
     </div>
   );
 };

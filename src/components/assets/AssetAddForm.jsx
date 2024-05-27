@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import './AssetForm.css';
 import '../common/common.css';
 import ConfirmationModal from '../common/ConfirmationModal';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const AssetAddForm = ({ onClose }) => {
   const currentDate = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
@@ -59,7 +62,7 @@ const AssetAddForm = ({ onClose }) => {
       const responseData = await response.json();
 
       if (response.ok) {
-        console.log('Asset added successfully:', responseData.message || 'Asset added successfully');
+        toast.success(responseData.message || 'Asset added successfully');
         setShowConfirmation(true);
       } else {
         throw new Error(responseData.error || 'Failed to add asset');
@@ -162,6 +165,7 @@ const AssetAddForm = ({ onClose }) => {
           onCancel={handleCancel}
         />
       )}
+      <ToastContainer />
     </div>
   );
 };
