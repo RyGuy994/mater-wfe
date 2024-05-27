@@ -71,7 +71,7 @@ const AssetTable = ({ assets, openEditModal }) => {
       {
         Header: 'Actions',
         Cell: ({ row }) => (
-          <button onClick={() => openEditModal(row.original)}>Edit</button>
+          <button className="standard-btn" onClick={() => openEditModal(row.original)}>Edit</button>
         ),
         disableFilters: true,
         disableSortBy: true,
