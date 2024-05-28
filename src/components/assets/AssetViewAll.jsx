@@ -28,9 +28,17 @@ fuzzyTextFilterFn.autoRemove = val => !val;
 
 const AssetTable = ({ assets, openEditModal }) => {
   const data = useMemo(() => assets, [assets]);
+  const baseUrl = import.meta.env.VITE_BASE_URL;
 
   const columns = useMemo(
     () => [
+      {
+        Header: 'Image',
+        accessor: 'image_path',
+        Cell: ({ cell: { value }, row }) => (value ? <img src={`${baseUrl}/static/assets/${row.original.id}/image/${value.split('/').pop()}`} alt="Asset" style={{ width: '50px' }} /> : <img src={`${baseUrl}/static/images/default.png`} alt="Asset" style={{ width: '50px' }} />),
+        disableFilters: true,
+        disableSortBy: true,        
+      },
       {
         Header: 'Name',
         accessor: 'name',
@@ -60,13 +68,6 @@ const AssetTable = ({ assets, openEditModal }) => {
         accessor: 'asset_status',
         Filter: DefaultColumnFilter,
         filter: 'fuzzyText',
-      },
-      {
-        Header: 'Image',
-        accessor: 'image_path',
-        Cell: ({ cell: { value } }) => (value ? <img src={value} alt="Asset" style={{ width: '50px' }} /> : null),
-        disableFilters: true,
-        disableSortBy: true,
       },
       {
         Header: 'Actions',

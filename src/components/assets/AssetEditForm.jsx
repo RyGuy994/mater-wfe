@@ -14,6 +14,7 @@ const AssetEditForm = ({ asset, onSubmit, onClose }) => {
     image: null,
   });
   const [imagePreview, setImagePreview] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     if (asset) {
@@ -23,10 +24,12 @@ const AssetEditForm = ({ asset, onSubmit, onClose }) => {
         description: asset.description || '',
         acquired_date: asset.acquired_date || '',
         asset_status: asset.asset_status || 'Ready',
-        image: asset.image_path || null,
+        image: null,
       });
+
       if (asset.image_path) {
-        setImagePreview(asset.image_path);
+        const baseUrl = import.meta.env.VITE_BASE_URL;
+        setImagePreview(`${baseUrl}/static/assets/${asset.id}/image/${asset.image_path.split('/').pop()}`);
       }
     }
   }, [asset]);
@@ -54,50 +57,40 @@ const AssetEditForm = ({ asset, onSubmit, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const assetToSubmit = { ...assetData };
+    const jwtToken = localStorage.getItem('jwt');
 
-    // If there's a new image file, convert it to base64
-    if (assetData.image && typeof assetData.image !== 'string') {
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        assetToSubmit.image = reader.result.split(',')[1]; // Get the base64 string without the prefix
-        await updateAsset(assetToSubmit);
-      };
-      reader.readAsDataURL(assetData.image);
-    } else {
-      await updateAsset(assetToSubmit);
+    const formData = new FormData();
+    formData.append('name', assetData.name);
+    formData.append('asset_sn', assetData.asset_sn);
+    formData.append('description', assetData.description);
+    formData.append('acquired_date', assetData.acquired_date);
+    formData.append('asset_status', assetData.asset_status);
+    formData.append('jwt', jwtToken);
+
+    if (assetData.image) {
+      formData.append('image', assetData.image);
     }
-  };
 
-  const updateAsset = async (assetToSubmit) => {
     try {
       const baseUrl = import.meta.env.VITE_BASE_URL;
-      const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
+      const EditAssetUrl = `${baseUrl}/assets/asset_edit/${asset.id}`;
 
-      // Include the JWT token in the request body
-      const response = await fetch(`${baseUrl}/assets/asset_edit/${asset.id}`, {
+      const response = await fetch(EditAssetUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ...assetToSubmit, jwt: jwtToken }),
+        body: formData,
       });
 
-      const result = await response.json();
+      const responseData = await response.json();
 
-      if (!response.ok) {
-        throw new Error(`Network response was not ok: ${result.error}`);
+      if (response.ok) {
+        toast.success(responseData.message || 'Asset updated successfully');
+        onSubmit();
+      } else {
+        throw new Error(responseData.error || 'Failed to update asset');
       }
-
-      onSubmit(result);
-      toast.success('Asset updated successfully!');
-      // Optionally, delay the reload to give time for the toast to show
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
     } catch (error) {
-      console.error('Error updating the asset:', error);
-      toast.error('Failed to update asset. Please try again.');
+      console.error('Failed to update asset:', error.message);
+      setErrorMessage('Failed to update asset');
     }
   };
 
@@ -168,6 +161,7 @@ const AssetEditForm = ({ asset, onSubmit, onClose }) => {
         <button type="submit" className="standard-btn">Save</button>
         <button type="button" className="standard-btn" onClick={onClose}>Cancel</button>
       </form>
+      {errorMessage && <p className="error">{errorMessage}</p>}
       <ToastContainer />
     </div>
   );

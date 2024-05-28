@@ -6,7 +6,6 @@ import ConfirmationModal from '../common/ConfirmationModal';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
 const AssetAddForm = ({ onClose }) => {
   const currentDate = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
 
@@ -45,7 +44,20 @@ const AssetAddForm = ({ onClose }) => {
     e.preventDefault();
 
     const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
-    const requestData = { ...assetData, jwt: jwtToken }; // Include JWT in request body
+    const formData = new FormData(); // Using FormData to handle file upload
+
+    // Append other asset data
+    formData.append('name', assetData.name);
+    formData.append('asset_sn', assetData.asset_sn);
+    formData.append('description', assetData.description);
+    formData.append('acquired_date', assetData.acquired_date);
+    formData.append('asset_status', assetData.asset_status);
+    formData.append('jwt', jwtToken);
+
+    // Append the image file
+    if (assetData.image) {
+      formData.append('image', assetData.image);
+    }
 
     try {
       const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -53,10 +65,7 @@ const AssetAddForm = ({ onClose }) => {
 
       const response = await fetch(AddAssetUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData),
+        body: formData, // Sending FormData
       });
 
       const responseData = await response.json();
