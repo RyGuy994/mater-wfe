@@ -36,6 +36,28 @@ const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
 
   const data = useMemo(() => assets, [assets]);
   const baseUrl = import.meta.env.VITE_BASE_URL;
+  
+  const handleDownload = async (downloadAsset) => {
+    try {
+      const response = await fetch(`${baseUrl}/assets/generate_zip/${downloadAsset.id}`);
+      if (!response.ok) {
+        throw new Error('Failed to download ZIP file');
+      }
+  
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `asset_${downloadAsset.id}_files.zip`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading ZIP file:', error);
+      toast.error('Failed to download ZIP file');
+    }
+  };
+  
 
   const handleDelete = (asset) => {
     console.log('handleDelete called with asset:', asset);
@@ -126,6 +148,7 @@ const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
         Cell: ({ row }) => (
           <div>
             <button className="standard-btn" onClick={() => openEditModal(row.original)}>Edit</button>
+            <button className="standard-btn" onClick={() => handleDownload(row.original)}>Download</button>
             <button className="standard-del-btn" onClick={() => handleDelete(row.original)}>Delete</button>
           </div>
         ),
@@ -163,9 +186,9 @@ const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
   );
 
   return (
-    <div>
+    <div style={{ maxHeight: '90vh', overflowY: 'auto' }}>
       {showDeleteModal && (
-        <div className="modal">
+        <div className="modal-overlay">
           <div className="modal-content">
             <h4>Confirm Deletion</h4>
             <p>Please type "del" to confirm the deletion of this asset:</p>
@@ -175,7 +198,7 @@ const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
               onChange={(e) => setConfirmText(e.target.value)}
             />
             <div className="modal-actions">
-              <button className="standard-btn" onClick={confirmDelete}>Delete</button>
+              <button className="standard-del-btn" onClick={confirmDelete}>Delete</button>
               <button className="standard-btn" onClick={() => setShowDeleteModal(false)}>Cancel</button>
             </div>
           </div>
@@ -276,7 +299,6 @@ const AssetViewAll = () => {
       console.error('Failed to update asset:', data.error);
     }
   };
-
 
   return (
     <div id="content">
