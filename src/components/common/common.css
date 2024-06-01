@@ -19,6 +19,25 @@
     background-color: #45a049;
 }
 
+/* standard button */
+.standard-del-btn {
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff0000c0;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.standard-del-btn:hover {
+    background-color: #ff0000e3;
+}
+
 /* Toggle Switch Styles */
 .switch {
     position: relative;
