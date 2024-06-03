@@ -144,3 +144,15 @@ input:checked + .slider:before {
 .standard-table tr:last-child td:last-child {
     border-bottom-right-radius: 10px;
 }
+
+.grid-item {
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .layout {
+    margin: 20px 0;
+  }
+  

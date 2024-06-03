@@ -159,7 +159,7 @@ const AssetEditForm = ({ asset, onSubmit, onClose }) => {
           </div>
         )}
         <button type="submit" className="standard-btn">Save</button>
-        <button type="button" className="standard-btn" onClick={onClose}>Cancel</button>
+        <button type="button" className="standard-del-btn" onClick={onClose}>Cancel</button>
       </form>
       {errorMessage && <p className="error">{errorMessage}</p>}
       <ToastContainer />
