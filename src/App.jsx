@@ -7,8 +7,7 @@ import Login from './components/auth/Login';
 import AssetAddModal from './components/assets/AssetAddModal';
 import AssetViewAll from './components/assets/AssetViewAll';
 import Signup from './components/auth/Signup';
-import AddServiceModal from './components/services/AddServiceModal';
-import ViewAllServices from './components/services/ViewAllServices';
+import ServiceAddModal from './components/services/ServiceAddModal';
 import './App.css';
 
 function App() {
@@ -60,13 +59,12 @@ function App() {
           <Route path="/home" element={isLoggedIn ? <Home username={username} /> : <Navigate to="/" />} />
           <Route path="/assets" element={<AssetAddModal onClose={closeAddAssetModal} />} />
           <Route path="/assets-view-all" element={<AssetViewAll />} />
-          <Route path="/services-view-all" element={<ViewAllServices />} />
           <Route path="/login" element={<Login handleLogin={handleLogin} setError={setError} />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/" element={<Login handleLogin={handleLogin} setError={setError} />} />
         </Routes>
         {isAssetModalOpen && <AssetAddModal onClose={closeAddAssetModal} />}
-        {isServiceModalOpen && <AddServiceModal onClose={closeAddServiceModal} />}
+        {isServiceModalOpen && <ServiceAddModal onClose={closeAddServiceModal} />} 
         {error && <div className="error">{error}</div>}
       </div>
     </Router>
