@@ -1,9 +1,10 @@
+// src/components/common/Header.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Header.css';
 import materImage from '../static/favicon-16x16.png';
 
-const Header = ({ isLoggedIn, handleLogout, openAddAssetModal }) => {
+const Header = ({ isLoggedIn, handleLogout, openAddAssetModal, openAddServiceModal }) => {
   return (
     <div className="header-container">
       <nav>
@@ -20,8 +21,15 @@ const Header = ({ isLoggedIn, handleLogout, openAddAssetModal }) => {
             <li className="dropdown">
               <span>Assets</span>
               <div className="dropdown-content">
-                <span onClick={() => { console.log("Add Asset button clicked"); openAddAssetModal(); }}>Add Asset</span>
+                <span onClick={openAddAssetModal}>Add Asset</span>
                 <Link to="/assets-view-all">View All Assets</Link>
+              </div>
+            </li>
+            <li className="dropdown">
+              <span>Services</span>
+              <div className="dropdown-content">
+                <span onClick={openAddServiceModal}>Add Service</span>
+                <Link to="/services-view-all">View All Services</Link>
               </div>
             </li>
             <li>
