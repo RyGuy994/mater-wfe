@@ -8,6 +8,7 @@ import AssetAddModal from './components/assets/AssetAddModal';
 import AssetViewAll from './components/assets/AssetViewAll';
 import Signup from './components/auth/Signup';
 import ServiceAddModal from './components/services/ServiceAddModal';
+import Settings from './components/settings/Settings';
 import './App.css';
 
 function App() {
@@ -61,6 +62,7 @@ function App() {
           <Route path="/assets-view-all" element={<AssetViewAll />} />
           <Route path="/login" element={<Login handleLogin={handleLogin} setError={setError} />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/settings" element={isLoggedIn ? <Settings /> : <Navigate to="/" />} />
           <Route path="/" element={<Login handleLogin={handleLogin} setError={setError} />} />
         </Routes>
         {isAssetModalOpen && <AssetAddModal onClose={closeAddAssetModal} />}

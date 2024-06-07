@@ -7,17 +7,17 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const ServiceAddForm = ({ onClose }) => {
-  const currentDate = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+  const currentDate = new Date().toISOString().split('T')[0];
 
-  const [assets, setAssets] = useState([]); // State to store assets for dropdown
-  const [filteredAssets, setFilteredAssets] = useState([]); // State to store filtered assets
-  const [searchTerm, setSearchTerm] = useState(''); // State to store search term for asset dropdown
+  const [assets, setAssets] = useState([]);
+  const [filteredAssets, setFilteredAssets] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [serviceData, setServiceData] = useState({
     asset_id: '',
     service_type: '',
     service_date: currentDate,
     service_cost: '',
-    service_complete: false,
+    service_status: '',
     service_notes: '',
     service_add_again_check: false,
     service_add_again_days_cal: '',
@@ -29,12 +29,11 @@ const ServiceAddForm = ({ onClose }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch assets from the backend
     const fetchAssets = async () => {
       try {
         const jwtToken = localStorage.getItem('jwt');
-        console.log('Fetching assets with JWT:', jwtToken); // Debug log
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/asset_all`, {
+        console.log('Fetching assets with JWT:', jwtToken);
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/assets/asset_all`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -50,9 +49,9 @@ const ServiceAddForm = ({ onClose }) => {
         }
 
         const assetsData = await response.json();
-        console.log('Assets fetched:', assetsData); // Debug log
+        console.log('Assets fetched:', assetsData);
         setAssets(assetsData);
-        setFilteredAssets(assetsData); // Initialize filtered assets
+        setFilteredAssets(assetsData);
       } catch (error) {
         console.error('Error during fetch operation:', error);
       }
@@ -76,17 +75,18 @@ const ServiceAddForm = ({ onClose }) => {
     const value = e.target.value;
     setSearchTerm(value);
 
+    console.log('Search term:', value);
     const filtered = assets.filter(asset => asset.name.toLowerCase().includes(value.toLowerCase()));
+    console.log('Filtered assets:', filtered);
     setFilteredAssets(filtered);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
-    const formData = new FormData(); // Using FormData to handle file upload
+    const jwtToken = localStorage.getItem('jwt');
+    const formData = new FormData();
 
-    // Append other service data
     for (const key in serviceData) {
       if (key !== 'attachments') {
         formData.append(key, serviceData[key]);
@@ -94,7 +94,6 @@ const ServiceAddForm = ({ onClose }) => {
     }
     formData.append('jwt', jwtToken);
 
-    // Append the attachment files
     if (serviceData.attachments) {
       Array.from(serviceData.attachments).forEach(file => {
         formData.append('attachments', file);
@@ -103,11 +102,11 @@ const ServiceAddForm = ({ onClose }) => {
 
     try {
       const baseUrl = import.meta.env.VITE_BASE_URL;
-      const AddServiceUrl = `${baseUrl}/service_add`;
+      const AddServiceUrl = `${baseUrl}/services/service_add`;
 
       const response = await fetch(AddServiceUrl, {
         method: 'POST',
-        body: formData, // Sending FormData
+        body: formData,
       });
 
       const responseData = await response.json();
@@ -131,7 +130,7 @@ const ServiceAddForm = ({ onClose }) => {
       service_type: '',
       service_date: currentDate,
       service_cost: '',
-      service_complete: false,
+      service_status: '',
       service_notes: '',
       service_add_again_check: false,
       service_add_again_days_cal: '',
@@ -142,7 +141,7 @@ const ServiceAddForm = ({ onClose }) => {
 
   const handleCancel = () => {
     setShowConfirmation(false);
-    onClose(); // Close the modal
+    onClose();
     navigate('/services-view-all');
   };
 
@@ -206,15 +205,17 @@ const ServiceAddForm = ({ onClose }) => {
           onChange={handleChange}
           step="any"
         /><br />
-        <label htmlFor="service_complete">Service Complete:</label>
+        <label htmlFor="service_status" className="required-field">Service Status:</label>
         <input
-          type="checkbox"
-          id="service_complete"
-          name="service_complete"
-          checked={serviceData.service_complete}
+          type="text"
+          id="service_status"
+          name="service_status"
+          placeholder="Service Status"
+          value={serviceData.service_status}
           onChange={handleChange}
+          required
         /><br />
-        {serviceData.service_complete && (
+        {serviceData.service_status === 'Complete' && (
           <div>
             <label htmlFor="service_add_again_check">Add Service Again?</label>
             <input

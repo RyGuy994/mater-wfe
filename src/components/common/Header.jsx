@@ -33,6 +33,11 @@ const Header = ({ isLoggedIn, handleLogout, openAddAssetModal, openAddServiceMod
               </div>
             </li>
             <li>
+              <Link to="/settings" className="icon-link">
+                <span>Settings</span>
+              </Link>
+            </li>
+            <li>
               <span onClick={handleLogout}>Logout</span>
             </li>
           </ul>

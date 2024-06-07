@@ -1,3 +1,4 @@
+// src/components/auth/SIgnup.jsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Login.css'; // Import the CSS file
