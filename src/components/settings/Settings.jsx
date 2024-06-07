@@ -1,4 +1,4 @@
-// src/components/Settings.jsx
+// src/components/settings/Settings.jsx
 import React from 'react';
 
 const Settings = () => {

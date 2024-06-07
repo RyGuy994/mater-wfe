@@ -1,147 +1,160 @@
-/* common.css */
+/* src/components/common/common.css */
 
-/* standard button */
+/* Styling for standard button */
 .standard-btn {
-    padding: 10px 20px;
-    margin: 10px;
-    border: none;
-    border-radius: 5px;
-    background-color: #4CAF50;
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    cursor: pointer;
+    padding: 10px 20px; /* Padding for button */
+    margin: 10px; /* Margin for button */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    background-color: #4CAF50; /* Green background color */
+    color: white; /* White text color */
+    text-align: center; /* Center align text */
+    text-decoration: none; /* No text decoration */
+    display: inline-block; /* Display as inline block */
+    font-size: 16px; /* Font size */
+    cursor: pointer; /* Cursor pointer on hover */
 }
 
+/* Hover effect for standard button */
 .standard-btn:hover {
-    background-color: #45a049;
+    background-color: #45a049; /* Darker green color on hover */
 }
 
-/* standard button */
+/* Styling for standard delete button */
 .standard-del-btn {
-    padding: 10px 20px;
-    margin: 10px;
-    border: none;
-    border-radius: 5px;
-    background-color: #ff0000c0;
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    cursor: pointer;
+    padding: 10px 20px; /* Padding for button */
+    margin: 10px; /* Margin for button */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    background-color: #ff0000c0; /* Red background color */
+    color: white; /* White text color */
+    text-align: center; /* Center align text */
+    text-decoration: none; /* No text decoration */
+    display: inline-block; /* Display as inline block */
+    font-size: 16px; /* Font size */
+    cursor: pointer; /* Cursor pointer on hover */
 }
 
+/* Hover effect for standard delete button */
 .standard-del-btn:hover {
-    background-color: #ff0000e3;
+    background-color: #ff0000e3; /* Darker red color on hover */
 }
 
-/* Toggle Switch Styles */
+/* Styles for Toggle Switch */
 .switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
+    position: relative; /* Position relative */
+    display: inline-block; /* Display as inline block */
+    width: 60px; /* Width of switch */
+    height: 34px; /* Height of switch */
 }
 
+/* Hidden input for Toggle Switch */
 .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
+    opacity: 0; /* Make input invisible */
+    width: 0; /* Set width to 0 */
+    height: 0; /* Set height to 0 */
 }
 
+/* Slider styles for Toggle Switch */
 .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-    border-radius: 34px;
+    position: absolute; /* Position absolute */
+    cursor: pointer; /* Cursor pointer */
+    top: 0; /* Align to top */
+    left: 0; /* Align to left */
+    right: 0; /* Align to right */
+    bottom: 0; /* Align to bottom */
+    background-color: #ccc; /* Default background color */
+    transition: .4s; /* Smooth transition */
+    border-radius: 34px; /* Rounded corners */
 }
 
+/* Slider handle for Toggle Switch */
 .slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
+    position: absolute; /* Position absolute */
+    content: ""; /* Empty content */
+    height: 26px; /* Height of handle */
+    width: 26px; /* Width of handle */
+    left: 4px; /* Offset from left */
+    bottom: 4px; /* Offset from bottom */
+    background-color: white; /* White background color */
+    transition: .4s; /* Smooth transition */
+    border-radius: 50%; /* Circle shape */
 }
 
+/* Checked state styles for Toggle Switch */
 input:checked + .slider {
-    background-color: #4CAF50;
+    background-color: #4CAF50; /* Green color when checked */
 }
 
+/* Focus styles for Toggle Switch */
 input:focus + .slider {
-    box-shadow: 0 0 1px #2196F3;
+    box-shadow: 0 0 1px #2196F3; /* Blue shadow on focus */
 }
 
+/* Position of handle when Toggle Switch is checked */
 input:checked + .slider:before {
-    transform: translateX(26px);
+    transform: translateX(26px); /* Move handle to right */
 }
 
-/* Content Styles */
+/* Styles for content container */
 #content {
-    padding: 20px;
+    padding: 20px; /* Padding for content */
 }
 
-/* Table Styles */
+/* Styles for standard table */
 .standard-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    margin-top: 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
+    width: 100%; /* Full width */
+    border-collapse: separate; /* Collapse border separately */
+    border-spacing: 0; /* No spacing between borders */
+    margin-top: 20px; /* Margin at the top */
+    border: 1px solid #ddd; /* Border color */
+    border-radius: 10px; /* Rounded corners */
 }
 
+/* Styles for table header and data cells */
 .standard-table th,
 .standard-table td {
-    padding: 12px;
-    border: 1px solid #ddd;
-    text-align: left;
+    padding: 12px; /* Padding for cells */
+    border: 1px solid #ddd; /* Border color */
+    text-align: left; /* Left align text */
 }
 
+/* Styles for table header */
 .standard-table th {
-    background-color: #4CAF50;
-    color: white;
-    font-weight: bold;
-    text-align: center;
+    background-color: #4CAF50; /* Green background color */
+    color: white; /* White text color */
+    font-weight: bold; /* Bold font weight */
+    text-align: center; /* Center align text */
 }
 
+/* Styles for table data */
 .standard-table td {
-    background-color: #f9f9f9;
+    background-color: #f9f9f9; /* Light gray background color */
 }
 
+/* Alternate row styles for table */
 .standard-table tr:nth-child(even) td {
-    background-color: #f2f2f2;
+    background-color: #f2f2f2; /* Lighter gray background color */
 }
 
+/* Hover effect for table rows */
 .standard-table tr:hover td {
-    background-color: #ddd;
+    background-color: #ddd; /* Darker gray background color on hover */
 }
 
+/* Border radius for table corners */
 .standard-table th:first-child {
-    border-top-left-radius: 10px;
+    border-top-left-radius: 10px; /* Rounded top left corner */
 }
 
 .standard-table th:last-child {
-    border-top-right-radius: 10px;
+    border-top-right-radius: 10px; /* Rounded top right corner */
 }
 
 .standard-table tr:last-child td:first-child {
-    border-bottom-left-radius: 10px;
+    border-bottom-left-radius: 10px; /* Rounded bottom left corner */
 }
 
 .standard-table tr:last-child td:last-child {
-    border-bottom-right-radius: 10px;
+    border-bottom-right-radius: 10px; /* Rounded bottom right corner */
 }
-
