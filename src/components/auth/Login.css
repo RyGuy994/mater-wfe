@@ -1,33 +1,36 @@
-/* Login.css */
+/* src/components/auth/Login.css */
 
+/* Styling for the login container */
 .login {
-    text-align: center;
-  }
-  
-  .cool-text {
-    font-family: 'Arial Black', Gadget, sans-serif;
-    font-size: 60px;
-    color: #4CAF50;
-    text-shadow: 2px 2px 4px #000000;
-    letter-spacing: 0.1em;
-    text-align: center;
-    position: relative;
-  }
-  
-  .cool-text::after {
-    content: 'Maintenance. Asset. Tracking. Equipment. Registry.';
-    font-family: 'Arial', sans-serif;
-    font-size: 18px;
-    color: #000;
-    position: absolute;
-    top: 70px;
-    left: 0;
-    width: 100%;
-    text-align: center;
-  }
-  
-  .center {
-    display: block;
-    margin: auto;
-  }
-  
+  text-align: center;
+}
+
+/* Styling for the cool text */
+.cool-text {
+  font-family: 'Arial Black', Gadget, sans-serif;
+  font-size: 60px;
+  color: #4CAF50; /* Green color */
+  text-shadow: 2px 2px 4px #000000; /* Adding shadow effect */
+  letter-spacing: 0.1em;
+  text-align: center;
+  position: relative; /* Positioning relative to parent container */
+}
+
+/* Adding content after cool text */
+.cool-text::after {
+  content: 'Maintenance. Asset. Tracking. Equipment. Registry.'; /* Text content */
+  font-family: 'Arial', sans-serif;
+  font-size: 18px;
+  color: #000; /* Black color */
+  position: absolute; /* Positioning absolutely within the container */
+  top: 70px; /* Distance from the top of the container */
+  left: 0; /* Aligning to the left */
+  width: 100%; /* Full width of the container */
+  text-align: center; /* Center aligning text */
+}
+
+/* Centering the container */
+.center {
+  display: block;
+  margin: auto; /* Auto margin for centering */
+}
