@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import './settings.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Settings = () => {
   const [settings, setSettings] = useState([]);
   const [error, setError] = useState('');
   const [editMode, setEditMode] = useState(null);
   const [editValue, setEditValue] = useState('');
+  const [newSetting, setNewSetting] = useState({ whatfor: 'service_status', value: '', globalsetting: false });
   const baseUrl = import.meta.env.VITE_BASE_URL; // Use your base URL
 
   useEffect(() => {
@@ -13,6 +16,13 @@ const Settings = () => {
       try {
         const settingUrl = `${baseUrl}/settings/appsettings`;
         const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
+
+        if (!jwtToken) {
+          setError('JWT token is missing');
+          return;
+        }
+
+        console.log('Fetching settings with JWT:', jwtToken);
 
         const response = await fetch(settingUrl, {
           method: 'POST',
@@ -28,7 +38,8 @@ const Settings = () => {
           const data = await response.json();
           setSettings(data);
         } else {
-          setError('Failed to fetch settings');
+          const errMessage = await response.json();
+          setError(`Failed to fetch settings: ${errMessage.error}`);
         }
       } catch (err) {
         setError('An error occurred');
@@ -59,11 +70,15 @@ const Settings = () => {
             setting.id === settingId ? { ...setting, value: newValue } : setting
           )
         );
+        toast.success('Setting updated successfully');
       } else {
-        setError('Failed to update setting');
+        const errMessage = await response.json();
+        setError(`Failed to update setting: ${errMessage.error}`);
+        toast.error(`Failed to update setting: ${errMessage.error}`);
       }
     } catch (err) {
       setError('An error occurred');
+      toast.error('An error occurred');
     }
   };
 
@@ -89,32 +104,81 @@ const Settings = () => {
         );
         setEditMode(null);
         setEditValue('');
+        toast.success('Setting updated successfully');
       } else {
-        setError('Failed to update setting');
+        const errMessage = await response.json();
+        setError(`Failed to update setting: ${errMessage.error}`);
+        toast.error(`Failed to update setting: ${errMessage.error}`);
       }
     } catch (err) {
       setError('An error occurred');
+      toast.error('An error occurred');
     }
   };
 
   const handleDelete = async (settingId) => {
     try {
-      const deleteUrl = `${baseUrl}/settings/appsettings/delete`;
+      const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
+      const deleteUrl = `${baseUrl}/settings/appsettings/delete/${settingId}`;
+      console.log('Sending delete request:', deleteUrl, jwtToken); // Add logging
+
       const response = await fetch(deleteUrl, {
-        method: 'POST',
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwtToken}`
         },
-        body: JSON.stringify({ id: settingId }),
       });
 
       if (response.ok) {
         setSettings(prevSettings => prevSettings.filter(setting => setting.id !== settingId));
+        toast.success('Setting deleted successfully');
       } else {
-        setError('Failed to delete setting');
+        const errMessage = await response.json();
+        setError(`Failed to delete setting: ${errMessage.error}`);
+        toast.error(`Failed to delete setting: ${errMessage.error}`);
       }
     } catch (err) {
       setError('An error occurred');
+      toast.error('An error occurred');
+    }
+  };
+
+  const handleAddSetting = async (e) => {
+    e.preventDefault();
+    try {
+      const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
+
+      if (!jwtToken) {
+        setError('JWT token is missing');
+        toast.error('JWT token is missing');
+        return;
+      }
+
+      const addUrl = `${baseUrl}/settings/appsettings/add`;
+      console.log('Adding new setting with JWT:', jwtToken);
+
+      const response = await fetch(addUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...newSetting, jwt: jwtToken }),
+      });
+
+      if (response.ok) {
+        const newAddedSetting = await response.json();
+        setSettings([...settings, newAddedSetting]);
+        setNewSetting({ whatfor: 'service_status', value: '', globalsetting: false });
+        toast.success('Setting added successfully');
+      } else {
+        const errMessage = await response.json();
+        setError(`Failed to add setting: ${errMessage.error}`);
+        toast.error(`Failed to add setting: ${errMessage.error}`);
+      }
+    } catch (err) {
+      setError('An error occurred');
+      toast.error('An error occurred');
     }
   };
 
@@ -122,6 +186,35 @@ const Settings = () => {
     <div>
       <h1>Settings Page</h1>
       {error && <div className="error">{error}</div>}
+      <form onSubmit={handleAddSetting} className="add-setting-form">
+        <label>
+          Setting Type:
+          <select
+            value={newSetting.whatfor}
+            onChange={(e) => setNewSetting({ ...newSetting, whatfor: e.target.value })}
+          >
+            <option value="service_status">Service Status</option>
+            <option value="asset_status">Asset Status</option>
+          </select>
+        </label>
+        <label>
+          Value:
+          <input
+            type="text"
+            value={newSetting.value}
+            onChange={(e) => setNewSetting({ ...newSetting, value: e.target.value })}
+          />
+        </label>
+        <label>
+          Global:
+          <input
+            type="checkbox"
+            checked={newSetting.globalsetting}
+            onChange={(e) => setNewSetting({ ...newSetting, globalsetting: e.target.checked })}
+          />
+        </label>
+        <button type="submit">Add Setting</button>
+      </form>
       <table>
         <thead>
           <tr>
@@ -179,6 +272,7 @@ const Settings = () => {
           ))}
         </tbody>
       </table>
+      <ToastContainer />
     </div>
   );
 };

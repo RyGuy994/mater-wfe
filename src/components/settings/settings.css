@@ -11,6 +11,39 @@ table {
     text-align: center;
   }
   
+  .add-setting-form {
+    margin: 20px auto;
+    width: 50%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+  
+  .add-setting-form label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .add-setting-form input,
+  .add-setting-form select,
+  .add-setting-form button {
+    margin-top: 10px;
+    padding: 5px;
+    font-size: 16px;
+  }
+  
+  .add-setting-form button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .add-setting-form button:hover {
+    background-color: #45a049;
+  }
+  
   .switch {
     position: relative;
     display: inline-block;
@@ -83,5 +116,11 @@ table {
   button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+  }
+  
+  .error {
+    color: red;
+    text-align: center;
+    margin-top: 20px;
   }
   
