@@ -1,3 +1,5 @@
+/* src/components/Settings.jsx */
+
 import React, { useEffect, useState } from 'react';
 import './settings.css';
 import { ToastContainer, toast } from 'react-toastify';
@@ -183,7 +185,7 @@ const Settings = () => {
   };
 
   return (
-    <div>
+    <div className="scrollable-container">
       <h1>Settings Page</h1>
       {error && <div className="error">{error}</div>}
       <form onSubmit={handleAddSetting} className="add-setting-form">
@@ -194,6 +196,7 @@ const Settings = () => {
             onChange={(e) => setNewSetting({ ...newSetting, whatfor: e.target.value })}
           >
             <option value="service_status">Service Status</option>
+            <option value="service_type">Service Type</option>
             <option value="asset_status">Asset Status</option>
           </select>
         </label>
@@ -236,7 +239,7 @@ const Settings = () => {
                   />
                 ) : (
                   <span>
-                    {['global_service_status', 'global_asset_status'].includes(setting.whatfor) ? (
+                    {['global_service_status', 'global_asset_status', 'global_service_type'].includes(setting.whatfor) ? (
                       <label className="switch">
                         <input 
                           type="checkbox" 
@@ -252,7 +255,7 @@ const Settings = () => {
                 )}
               </td>
               <td>
-                {['service_status', 'asset_status'].includes(setting.whatfor) && (
+                {['service_status', 'asset_status','service_type'].includes(setting.whatfor) && (
                   <>
                     {editMode === setting.id ? (
                       <>

@@ -10,10 +10,11 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const ServiceAddForm = ({ onClose }) => {
   const currentDate = new Date().toISOString().split('T')[0];
-
   const [assets, setAssets] = useState([]);
   const [filteredAssets, setFilteredAssets] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusOptions, setStatusOptions] = useState([]);
+  const [serviceTypeOptions, setServiceTypeOptions] = useState([]); // New state for service types
   const [serviceData, setServiceData] = useState({
     asset_id: '',
     service_type: '',
@@ -30,6 +31,73 @@ const ServiceAddForm = ({ onClose }) => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const navigate = useNavigate();
 
+  // Fetch status options
+  useEffect(() => {
+    const fetchStatusOptions = async () => {
+      try {
+        const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
+        const baseUrl = import.meta.env.VITE_BASE_URL;
+        const statusUrl = `${baseUrl}/settings/appsettings/services/status`;
+
+        const response = await fetch(statusUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ jwt: jwtToken }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setStatusOptions(data.map(setting => setting.value));
+        } else {
+          const errMessage = await response.json();
+          setErrorMessage(`Failed to fetch status options: ${errMessage.error}`);
+          toast.error(`Failed to fetch status options: ${errMessage.error}`);
+        }
+      } catch (err) {
+        setErrorMessage('An error occurred while fetching status options');
+        toast.error('An error occurred while fetching status options');
+      }
+    };
+
+    fetchStatusOptions();
+  }, []);
+
+  // Fetch service type options
+  useEffect(() => {
+    const fetchServiceTypeOptions = async () => {
+      try {
+        const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
+        const baseUrl = import.meta.env.VITE_BASE_URL;
+        const serviceTypeUrl = `${baseUrl}/settings/appsettings/services/type`;
+
+        const response = await fetch(serviceTypeUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ jwt: jwtToken }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setServiceTypeOptions(data.map(setting => setting.value));
+        } else {
+          const errMessage = await response.json();
+          setErrorMessage(`Failed to fetch service type options: ${errMessage.error}`);
+          toast.error(`Failed to fetch service type options: ${errMessage.error}`);
+        }
+      } catch (err) {
+        setErrorMessage('An error occurred while fetching service type options');
+        toast.error('An error occurred while fetching service type options');
+      }
+    };
+
+    fetchServiceTypeOptions();
+  }, []);
+
+  // Fetch assets
   useEffect(() => {
     const fetchAssets = async () => {
       try {
@@ -39,7 +107,6 @@ const ServiceAddForm = ({ onClose }) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwtToken}`,
           },
           body: JSON.stringify({ jwt: jwtToken }),
         });
@@ -180,15 +247,18 @@ const ServiceAddForm = ({ onClose }) => {
           ))}
         </select><br />
         <label htmlFor="service_type" className="required-field">Service Type:</label>
-        <input
-          type="text"
+        <select
           id="service_type"
           name="service_type"
-          placeholder="Service Type"
           value={serviceData.service_type}
           onChange={handleChange}
           required
-        /><br />
+        >
+          <option value="">Select Service Type</option>
+          {serviceTypeOptions.map((type, index) => (
+            <option key={index} value={type}>{type}</option>
+          ))}
+        </select><br />
         <label htmlFor="service_date" className="required-field">Service Date:</label>
         <input
           type="date"
@@ -208,15 +278,18 @@ const ServiceAddForm = ({ onClose }) => {
           step="any"
         /><br />
         <label htmlFor="service_status" className="required-field">Service Status:</label>
-        <input
-          type="text"
+        <select
           id="service_status"
           name="service_status"
-          placeholder="Service Status"
           value={serviceData.service_status}
           onChange={handleChange}
           required
-        /><br />
+        >
+          <option value="">Select Service Status</option>
+          {statusOptions.map((status, index) => (
+            <option key={index} value={status}>{status}</option>
+          ))}
+        </select><br />
         {serviceData.service_status === 'Complete' && (
           <div>
             <label htmlFor="service_add_again_check">Add Service Again?</label>
@@ -239,7 +312,7 @@ const ServiceAddForm = ({ onClose }) => {
                 /><br />
                 <div className="custom-dropdown">
                   <button type="button" className="standard-btn">Add Days</button>
-                  <div className="custom-dropdown-content-double">
+                  <div className="custom-dropdown-content">
                     <div className="column">
                       <a onClick={() => addDaysToDate(7)}>7 Days</a>
                       <a onClick={() => addDaysToDate(14)}>14 Days</a>
@@ -271,6 +344,7 @@ const ServiceAddForm = ({ onClose }) => {
           type="file"
           id="attachments"
           name="attachments"
+          className="standard-btn"
           onChange={handleChange}
           multiple
         />

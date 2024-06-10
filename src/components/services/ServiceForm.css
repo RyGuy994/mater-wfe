@@ -18,3 +18,43 @@
     border: 1px solid #ccc; /* Add a border around inputs */
     border-radius: 4px; /* Add some border radius for rounded corners */
   }
+
+/* Custom dropdown styles */
+.custom-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.custom-dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  padding: 12px 16px;
+  border-radius: 4px;
+  flex-direction: column;
+}
+
+.custom-dropdown:hover .custom-dropdown-content {
+  display: flex;
+}
+
+.custom-dropdown .column {
+  display: flex;
+  flex-direction: column;
+  margin-right: 20px;
+}
+
+.custom-dropdown .column a {
+  color: black;
+  padding: 8px 0;
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+}
+
+.custom-dropdown .column a:hover {
+  background-color: #f1f1f1;
+}

@@ -50,7 +50,7 @@ const Header = ({ isLoggedIn, handleLogout, openAddAssetModal, openAddServiceMod
             </li>
             {/* Settings link */}
             <li>
-              <Link to="/settings" className="icon-link">
+              <Link to="/settings" className="dropdown">
                 <span>Settings</span>
               </Link>
             </li>
