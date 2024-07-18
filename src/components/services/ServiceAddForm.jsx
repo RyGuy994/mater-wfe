@@ -1,5 +1,3 @@
-/* src/components/services/ServiceAddForm.jsx */
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ServiceForm.css';
@@ -14,7 +12,7 @@ const ServiceAddForm = ({ onClose }) => {
   const [filteredAssets, setFilteredAssets] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusOptions, setStatusOptions] = useState([]);
-  const [serviceTypeOptions, setServiceTypeOptions] = useState([]); // New state for service types
+  const [serviceTypeOptions, setServiceTypeOptions] = useState([]);
   const [serviceData, setServiceData] = useState({
     asset_id: '',
     service_type: '',
@@ -35,7 +33,7 @@ const ServiceAddForm = ({ onClose }) => {
   useEffect(() => {
     const fetchStatusOptions = async () => {
       try {
-        const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
+        const jwtToken = localStorage.getItem('jwt');
         const baseUrl = import.meta.env.VITE_BASE_URL;
         const statusUrl = `${baseUrl}/settings/appsettings/services/status`;
 
@@ -68,7 +66,7 @@ const ServiceAddForm = ({ onClose }) => {
   useEffect(() => {
     const fetchServiceTypeOptions = async () => {
       try {
-        const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
+        const jwtToken = localStorage.getItem('jwt');
         const baseUrl = import.meta.env.VITE_BASE_URL;
         const serviceTypeUrl = `${baseUrl}/settings/appsettings/services/type`;
 
@@ -102,7 +100,6 @@ const ServiceAddForm = ({ onClose }) => {
     const fetchAssets = async () => {
       try {
         const jwtToken = localStorage.getItem('jwt');
-        console.log('Fetching assets with JWT:', jwtToken);
         const response = await fetch(`${import.meta.env.VITE_BASE_URL}/assets/asset_all`, {
           method: 'POST',
           headers: {
@@ -118,7 +115,6 @@ const ServiceAddForm = ({ onClose }) => {
         }
 
         const assetsData = await response.json();
-        console.log('Assets fetched:', assetsData);
         setAssets(assetsData);
         setFilteredAssets(assetsData);
       } catch (error) {
@@ -144,9 +140,7 @@ const ServiceAddForm = ({ onClose }) => {
     const value = e.target.value;
     setSearchTerm(value);
 
-    console.log('Search term:', value);
     const filtered = assets.filter(asset => asset.name.toLowerCase().includes(value.toLowerCase()));
-    console.log('Filtered assets:', filtered);
     setFilteredAssets(filtered);
   };
 
@@ -221,8 +215,15 @@ const ServiceAddForm = ({ onClose }) => {
     setServiceData({ ...serviceData, service_add_again_days_cal: formattedDate });
   };
 
+  const handleAssetSelect = (assetId) => {
+    setServiceData({ ...serviceData, asset_id: assetId });
+    const selectedAsset = assets.find(asset => asset.id === assetId);
+    setSearchTerm(selectedAsset ? selectedAsset.name : '');
+    setFilteredAssets([]);
+  };
+
   return (
-    <div>
+    <div className="form-container">
       <h3>Add New Service</h3>
       <form onSubmit={handleSubmit}>
         <label htmlFor="asset_id" className="required-field">Asset Name:</label>
@@ -230,26 +231,30 @@ const ServiceAddForm = ({ onClose }) => {
           type="text"
           id="asset_search"
           name="asset_search"
+          className="form-input"
           placeholder="Search Asset Name"
           value={searchTerm}
           onChange={handleSearchChange}
-        /><br />
-        <select
-          id="asset_id"
-          name="asset_id"
-          value={serviceData.asset_id}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Select Asset Name</option>
-          {filteredAssets.map(asset => (
-            <option key={asset.id} value={asset.id}>{asset.name}</option>
-          ))}
-        </select><br />
+        />
+        {searchTerm && filteredAssets.length > 0 && (
+          <ul className="asset-dropdown-list">
+            {filteredAssets.map(asset => (
+              <li
+                key={asset.id}
+                className="asset-dropdown-list-item"
+                onClick={() => handleAssetSelect(asset.id)}
+              >
+                {asset.name}
+              </li>
+            ))}
+          </ul>
+        )}
+        <br />
         <label htmlFor="service_type" className="required-field">Service Type:</label>
         <select
           id="service_type"
           name="service_type"
+          className="form-input"
           value={serviceData.service_type}
           onChange={handleChange}
           required
@@ -264,6 +269,7 @@ const ServiceAddForm = ({ onClose }) => {
           type="date"
           id="service_date"
           name="service_date"
+          className="form-input"
           value={serviceData.service_date}
           onChange={handleChange}
           required
@@ -273,14 +279,15 @@ const ServiceAddForm = ({ onClose }) => {
           type="number"
           id="service_cost"
           name="service_cost"
+          className="form-input"
           value={serviceData.service_cost}
           onChange={handleChange}
-          step="any"
         /><br />
         <label htmlFor="service_status" className="required-field">Service Status:</label>
         <select
           id="service_status"
           name="service_status"
+          className="form-input"
           value={serviceData.service_status}
           onChange={handleChange}
           required
@@ -290,52 +297,11 @@ const ServiceAddForm = ({ onClose }) => {
             <option key={index} value={status}>{status}</option>
           ))}
         </select><br />
-        {serviceData.service_status === 'Complete' && (
-          <div>
-            <label htmlFor="service_add_again_check">Add Service Again?</label>
-            <input
-              type="checkbox"
-              id="service_add_again_check"
-              name="service_add_again_check"
-              checked={serviceData.service_add_again_check}
-              onChange={handleChange}
-            /><br />
-            {serviceData.service_add_again_check && (
-              <div>
-                <label htmlFor="service_add_again_days_cal">Due Date for Next Service:</label>
-                <input
-                  type="date"
-                  id="service_add_again_days_cal"
-                  name="service_add_again_days_cal"
-                  value={serviceData.service_add_again_days_cal}
-                  onChange={handleChange}
-                /><br />
-                <div className="custom-dropdown">
-                  <button type="button" className="standard-btn">Add Days</button>
-                  <div className="custom-dropdown-content">
-                    <div className="column">
-                      <a onClick={() => addDaysToDate(7)}>7 Days</a>
-                      <a onClick={() => addDaysToDate(14)}>14 Days</a>
-                      <a onClick={() => addDaysToDate(30)}>30 Days</a>
-                      <a onClick={() => addDaysToDate(60)}>60 Days</a>
-                    </div>
-                    <div className="column">
-                      <a onClick={() => addDaysToDate(90)}>90 Days</a>
-                      <a onClick={() => addDaysToDate(180)}>180 Days</a>
-                      <a onClick={() => addDaysToDate(365)}>365 Days</a>
-                      <a onClick={() => addDaysToDate(730)}>730 Days</a>
-                    </div>
-                  </div>
-                </div><br />
-              </div>
-            )}
-          </div>
-        )}
         <label htmlFor="service_notes">Service Notes:</label>
-        <br></br>
         <textarea
           id="service_notes"
           name="service_notes"
+          className="form-input"
           value={serviceData.service_notes}
           onChange={handleChange}
         ></textarea><br />
@@ -344,34 +310,25 @@ const ServiceAddForm = ({ onClose }) => {
           type="file"
           id="attachments"
           name="attachments"
-          className="standard-btn"
-          onChange={handleChange}
+          className="form-input"
           multiple
-        />
-        {attachmentsPreview.length > 0 && (
-          <div>
-            {attachmentsPreview.map((src, index) => (
-              <img
-                key={index}
-                src={src}
-                alt={`Attachment Preview ${index + 1}`}
-                style={{ maxWidth: '100px', maxHeight: '100px', margin: '5px' }}
-              />
-            ))}
-          </div>
-        )}
-        <br></br>
+          onChange={handleChange}
+        /><br />
+        <div className="attachments-preview">
+          {attachmentsPreview.map((preview, index) => (
+            <img key={index} src={preview} alt={`Attachment Preview ${index + 1}`} />
+          ))}
+        </div>
         <button type="submit" className="standard-btn">Add Service</button>
       </form>
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
       {showConfirmation && (
         <ConfirmationModal
-          message="Service added successfully. Do you want to add another service?"
           onConfirm={handleConfirm}
           onCancel={handleCancel}
+          message="Service added successfully. Do you want to add another service?"
         />
       )}
+      <ToastContainer />
     </div>
   );
 };
