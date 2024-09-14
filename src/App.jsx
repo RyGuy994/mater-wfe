@@ -1,5 +1,3 @@
-// src/App.jsx
-
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Header from './components/common/Header';
@@ -9,6 +7,7 @@ import AssetAddModal from './components/assets/AssetAddModal';
 import AssetViewAll from './components/assets/AssetViewAll';
 import Signup from './components/auth/Signup';
 import ServiceAddModal from './components/services/ServiceAddModal';
+import ServiceViewAll from './components/services/ServiceViewAll';
 import Settings from './components/settings/Settings';
 import './App.css';
 
@@ -70,6 +69,7 @@ function App() {
           <Route path="/home" element={isLoggedIn ? <Home username={username} /> : <Navigate to="/" />} />
           <Route path="/assets" element={<AssetAddModal onClose={closeAddAssetModal} />} />
           <Route path="/assets-view-all" element={<AssetViewAll />} />
+          <Route path="/services-view-all" element={<ServiceViewAll />} /> {/* Add this line */}
           <Route path="/login" element={<Login handleLogin={handleLogin} setError={setError} />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/settings" element={isLoggedIn ? <Settings /> : <Navigate to="/" />} />
