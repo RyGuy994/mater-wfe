@@ -13,6 +13,7 @@ const AssetEditForm = ({ asset, onSubmit, onClose }) => {
     asset_status: '',
     image: null,
   });
+  const [statusOptions, setStatusOptions] = useState([]);
   const [imagePreview, setImagePreview] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -33,6 +34,38 @@ const AssetEditForm = ({ asset, onSubmit, onClose }) => {
       }
     }
   }, [asset]);
+
+  useEffect(() => {
+    const fetchStatusOptions = async () => {
+      try {
+        const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
+        const baseUrl = import.meta.env.VITE_BASE_URL;
+        const statusUrl = `${baseUrl}/settings/appsettings/assets/status`;
+
+        const response = await fetch(statusUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ jwt: jwtToken }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setStatusOptions(data.map(setting => setting.value));
+        } else {
+          const errMessage = await response.json();
+          setErrorMessage(`Failed to fetch status options: ${errMessage.error}`);
+          toast.error(`Failed to fetch status options: ${errMessage.error}`);
+        }
+      } catch (err) {
+        setErrorMessage('An error occurred while fetching status options');
+        toast.error('An error occurred while fetching status options');
+      }
+    };
+
+    fetchStatusOptions();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -137,9 +170,11 @@ const AssetEditForm = ({ asset, onSubmit, onClose }) => {
           onChange={handleChange}
           required
         >
-          <option value="Ready">Ready</option>
-          <option value="Needs Attention">Needs Attention</option>
-          <option value="Sold">Sold</option>
+          {statusOptions.map((status, index) => (
+            <option key={index} value={status}>
+              {status}
+            </option>
+          ))}
         </select><br />
         <label htmlFor="image">Asset Image:</label>
         <input
