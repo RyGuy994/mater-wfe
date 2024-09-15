@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './AssetForm.css';
+import '../common/form.css';
 import '../common/common.css';
 import ConfirmationModal from '../common/ConfirmationModal';
 import { ToastContainer, toast } from 'react-toastify';
@@ -135,43 +135,55 @@ const AssetAddForm = ({ onClose }) => {
   };
 
   return (
-    <div>
+    <div className="form-container">
       <h3>Add New Asset</h3>
       <form onSubmit={handleSubmit}>
+        <label htmlFor="name" className="required-field">Asset Name:</label>
         <input
           type="text"
+          id="name"
           name="name"
+          className="form-input"
           placeholder="Asset Name"
           value={assetData.name}
           onChange={handleChange}
           required
         /><br />
+        <label htmlFor="asset_sn" className="required-field">Asset Serial Number:</label>
         <input
           type="text"
+          id="asset_sn"
           name="asset_sn"
+          className="form-input"
           placeholder="Asset Serial Number"
           value={assetData.asset_sn}
           onChange={handleChange}
           required
         /><br />
+        <label htmlFor="description">Asset Description:</label>
         <input
           type="text"
+          id="description"
           name="description"
+          className="form-input"
           placeholder="Asset Description"
           value={assetData.description}
           onChange={handleChange}
         /><br />
+        <label htmlFor="acquired_date">Acquired Date:</label>
         <input
           type="date"
+          id="acquired_date"
           name="acquired_date"
-          placeholder="Acquired Date"
+          className="form-input"
           value={assetData.acquired_date}
           onChange={handleChange}
         /><br />
-        <label htmlFor="asset_status">Asset Status:</label>
-        <br />
+        <label htmlFor="asset_status" className="required-field">Asset Status:</label>
         <select
+          id="asset_status"
           name="asset_status"
+          className="form-input"
           value={assetData.asset_status}
           onChange={handleChange}
           required
@@ -185,13 +197,14 @@ const AssetAddForm = ({ onClose }) => {
         <label htmlFor="image">Asset Image:</label>
         <input
           type="file"
+          id="image"
           name="image"
-          className="standard-btn"
+          className="form-input"
           onChange={handleChange}
           accept="image/*"
         /><br />
         {imagePreview && (
-          <div id="image-preview">
+          <div className="image-preview">
             <img
               src={imagePreview}
               alt="Image Preview"

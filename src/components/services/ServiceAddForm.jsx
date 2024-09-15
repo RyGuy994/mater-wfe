@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './ServiceForm.css';
+import '../common/form.css';
 import '../common/common.css';
 import ConfirmationModal from '../common/ConfirmationModal';
 import { ToastContainer, toast } from 'react-toastify';
