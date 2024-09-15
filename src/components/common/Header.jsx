@@ -1,9 +1,7 @@
-// src/components/common/Header.jsx
+// Import React and necessary hooks
+import React, { useState } from 'react';
 
-// Import React library
-import React from 'react';
-
-// Import Link component from React Router
+// Import Link from React Router
 import { Link } from 'react-router-dom';
 
 // Import CSS file for styling
@@ -12,18 +10,38 @@ import './Header.css';
 // Import Mater image
 import materImage from '../static/favicon-16x16.png';
 
+// Import Modal component
+import Modal from '../common/Modal';
+
 // Header component
-const Header = ({ isLoggedIn, handleLogout, openAddAssetModal, openAddServiceModal }) => {
+const Header = ({ isLoggedIn, handleLogout }) => {
+  // State to manage modal visibility and type
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState(null); // 'asset' or 'service'
+
+  // Open Add Asset modal
+  const openAddAssetModal = () => {
+    setModalType('asset');
+    setModalOpen(true);
+  };
+
+  // Open Add Service modal
+  const openAddServiceModal = () => {
+    setModalType('service');
+    setModalOpen(true);
+  };
+
+  // Close modal
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setModalType(null);
+  };
+
   return (
-    // Header container
     <div className="header-container">
-      {/* Navigation */}
       <nav>
-        {/* Conditional rendering based on login status */}
         {isLoggedIn ? (
-          // If user is logged in
           <ul>
-            {/* Home link */}
             <li>
               <Link to="/home" className="icon-link">
                 <div className="icon-container">
@@ -32,7 +50,6 @@ const Header = ({ isLoggedIn, handleLogout, openAddAssetModal, openAddServiceMod
                 </div>
               </Link>
             </li>
-            {/* Assets dropdown */}
             <li className="dropdown">
               <span>Assets</span>
               <div className="dropdown-content">
@@ -40,7 +57,6 @@ const Header = ({ isLoggedIn, handleLogout, openAddAssetModal, openAddServiceMod
                 <Link to="/assets-view-all">View All Assets</Link>
               </div>
             </li>
-            {/* Services dropdown */}
             <li className="dropdown">
               <span>Services</span>
               <div className="dropdown-content">
@@ -48,21 +64,17 @@ const Header = ({ isLoggedIn, handleLogout, openAddAssetModal, openAddServiceMod
                 <Link to="/services-view-all">View All Services</Link>
               </div>
             </li>
-            {/* Settings link */}
             <li>
               <Link to="/settings">
                 <span>Settings</span>
               </Link>
             </li>
-            {/* Logout button */}
             <li>
               <span onClick={handleLogout}>Logout</span>
             </li>
           </ul>
         ) : (
-          // If user is not logged in
           <ul>
-            {/* Login link */}
             <li>
               <Link to="/" className="icon-link">
                 <div className="icon-container">
@@ -74,6 +86,19 @@ const Header = ({ isLoggedIn, handleLogout, openAddAssetModal, openAddServiceMod
           </ul>
         )}
       </nav>
+
+      {/* Conditionally render the Modal component */}
+      {modalOpen && (
+        <Modal
+          type={modalType}
+          mode="add"
+          onClose={handleCloseModal}
+          onSubmit={() => {
+            // Define what happens after form submission
+            handleCloseModal();
+          }}
+        />
+      )}
     </div>
   );
 };

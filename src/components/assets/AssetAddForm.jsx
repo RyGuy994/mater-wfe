@@ -213,6 +213,7 @@ const AssetAddForm = ({ onClose }) => {
           </div>
         )}
         <button type="submit" className="standard-btn">Submit</button>
+        <button type="button" className="standard-del-btn" onClick={onClose}>Cancel</button>
       </form>
       {errorMessage && <div>{errorMessage}</div>}
       {showConfirmation && (

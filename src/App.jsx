@@ -3,10 +3,10 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Header from './components/common/Header';
 import Home from './components/Home';
 import Login from './components/auth/Login';
-import AssetAddModal from './components/assets/AssetAddModal';
+import AssetAddModal from './components/hold-over/AssetAddModal';
 import AssetViewAll from './components/assets/AssetViewAll';
 import Signup from './components/auth/Signup';
-import ServiceAddModal from './components/services/ServiceAddModal';
+import ServiceAddModal from './components/hold-over/ServiceAddModal';
 import ServiceViewAll from './components/services/ServiceViewAll';
 import Settings from './components/settings/Settings';
 import './App.css';

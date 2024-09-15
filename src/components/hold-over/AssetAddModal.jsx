@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import AssetAddForm from './AssetAddForm.jsx';
+import AssetAddForm from '../assets/AssetAddForm.jsx';
 
 const style = {
   position: 'absolute',

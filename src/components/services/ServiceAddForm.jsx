@@ -320,6 +320,7 @@ const ServiceAddForm = ({ onClose }) => {
           ))}
         </div>
         <button type="submit" className="standard-btn">Add Service</button>
+        <button type="button" className="standard-del-btn" onClick={onClose}>Cancel</button>
       </form>
       {showConfirmation && (
         <ConfirmationModal

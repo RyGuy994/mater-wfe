@@ -1,10 +1,18 @@
+// src/components/services/ServiceAddModal.jsx
+
+// Import React library
 import React from 'react';
+
+// Import Material-UI components
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import AssetEditForm from './AssetEditForm.jsx';
 
+// Import ServiceAddForm component
+import ServiceAddForm from '../services/ServiceAddForm.jsx';
+
+// Style for the modal
 const style = {
   position: 'absolute',
   top: '50%',
@@ -17,23 +25,29 @@ const style = {
   p: 4,
 };
 
-const AssetEditModal = ({ asset, onClose, onSubmit }) => {
+// ServiceAddModal component
+const ServiceAddModal = ({ onClose }) => {
   return (
+    // Modal component with Material-UI
     <Modal
-      open={true}
-      onClose={onClose}
+      open={true} // Always open the modal
+      onClose={onClose} // onClose event handler
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
+        {/* Modal title */}
         <Typography id="modal-modal-title" variant="h6" component="h2">
-          Edit Asset
+          Add Service
         </Typography>
-        <AssetEditForm asset={asset} onSubmit={onSubmit} onClose={onClose} />
+        {/* ServiceAddForm component for adding a new service */}
+        <ServiceAddForm onClose={onClose} />
+        {/* Close button */}
         <Button className="standard-btn" onClick={onClose}>Close</Button>
       </Box>
     </Modal>
   );
 };
 
-export default AssetEditModal;
+// Export the ServiceAddModal component
+export default ServiceAddModal;

@@ -2,8 +2,8 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useTable, useSortBy, useFilters } from 'react-table';
 import { matchSorter } from 'match-sorter';
 import '../common/common.css';
-import './Modal.css';
-import AssetEditModal from './AssetEditModal';
+import '../common/Modal.css';
+import GenericModal from '../common/Modal'; // Adjust the path
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -242,25 +242,32 @@ const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
 
 const AssetViewAll = () => {
   const [assets, setAssets] = useState([]);
-  const [editAsset, setEditAsset] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState(null); // 'asset' or 'service'
+  const [editAsset, setEditAsset] = useState(null); // Asset to edit
 
   const fetchAssets = async () => {
     const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
     const baseUrl = import.meta.env.VITE_BASE_URL;
-
-    const response = await fetch(`${baseUrl}/assets/asset_all`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ jwt: jwtToken }) // Send JWT in the body
-    });
-
-    const data = await response.json();
-    if (response.ok) {
-      setAssets(data);
-    } else {
-      console.error('Failed to fetch assets:', data.error);
+  
+    try {
+      const response = await fetch(`${baseUrl}/assets/asset_all`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ jwt: jwtToken }) // Send JWT in the body
+      });
+  
+      const data = await response.json();
+      if (response.ok) {
+        setAssets(data);
+      } else {
+        throw new Error(data.error || 'Failed to fetch assets');
+      }
+    } catch (error) {
+      console.error('Error fetching assets:', error.message);
+      toast.error('Failed to fetch assets');
     }
   };
 
@@ -269,11 +276,15 @@ const AssetViewAll = () => {
   }, []);
 
   const openEditModal = (asset) => {
-    setEditAsset(asset);
+    setEditAsset(asset);   // Pass the asset to be edited
+    setModalType('asset'); // Set modal type to 'asset'
+    setModalOpen(true);    // Open modal
   };
 
-  const closeEditModal = () => {
-    setEditAsset(null);
+  const closeModal = () => {
+    setModalOpen(false);   // Close modal
+    setEditAsset(null);    // Clear edit asset
+    setModalType(null);    // Reset modal type
   };
 
   const handleEditSubmit = async (updatedAsset) => {
@@ -294,7 +305,7 @@ const AssetViewAll = () => {
     const data = await response.json();
     if (response.ok) {
       await fetchAssets(); // Re-fetch the assets data after the edit
-      closeEditModal();
+      closeModal();
     } else {
       console.error('Failed to update asset:', data.error);
     }
@@ -304,14 +315,16 @@ const AssetViewAll = () => {
     <div id="content">
       <h3>All Assets</h3>
       <AssetTable assets={assets} openEditModal={openEditModal} fetchAssets={fetchAssets} />
-      {editAsset && (
-        <AssetEditModal
-          asset={editAsset}
-          onClose={closeEditModal}
-          onSubmit={handleEditSubmit}
+      {modalOpen && (
+        <GenericModal
+          type={modalType}      // 'asset' or 'service'
+          mode="edit"           // Set mode to 'edit'
+          item={editAsset}      // Pass the asset to be edited
+          onClose={closeModal}  // Function to close modal
+          onSubmit={handleEditSubmit} // Function to handle submit
           fetchAssets={fetchAssets}
         />
-      )}
+)}
     </div>
   );
 };
