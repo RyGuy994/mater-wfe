@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useTable, useSortBy, useFilters } from 'react-table';
 import { matchSorter } from 'match-sorter';
 import '../common/common.css';
-import './Modal.css';
+import '../common/Modal.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
