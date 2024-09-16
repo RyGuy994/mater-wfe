@@ -1,7 +1,7 @@
 /* src/components/Settings.jsx */
-
 import React, { useEffect, useState } from 'react';
 import './settings.css';
+import DeleteModal from '../common/DeleteModal';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -9,6 +9,8 @@ const Settings = () => {
   const [settings, setSettings] = useState([]);
   const [error, setError] = useState('');
   const [editMode, setEditMode] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // Modal visibility state
+  const [settingToDelete, setSettingToDelete] = useState(null); // Store the ID of the setting to delete
   const [editValue, setEditValue] = useState('');
   const [newSetting, setNewSetting] = useState({ whatfor: 'service_status', value: '', globalsetting: false });
   const baseUrl = import.meta.env.VITE_BASE_URL; // Use your base URL
@@ -118,11 +120,17 @@ const Settings = () => {
     }
   };
 
-  const handleDelete = async (settingId) => {
+  // Add the handleDelete function to show the modal
+  const handleDelete = (settingId) => {
+    setSettingToDelete(settingId); // Set the setting ID for deletion
+    setShowDeleteModal(true); // Show the delete confirmation modal
+  };
+
+  const confirmDelete = async () => {
+    setShowDeleteModal(false); // Close the modal
     try {
-      const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
-      const deleteUrl = `${baseUrl}/settings/appsettings/delete/${settingId}`;
-      console.log('Sending delete request:', deleteUrl, jwtToken); // Add logging
+      const jwtToken = localStorage.getItem('jwt');
+      const deleteUrl = `${baseUrl}/settings/appsettings/delete/${settingToDelete}`;
 
       const response = await fetch(deleteUrl, {
         method: 'DELETE',
@@ -133,7 +141,7 @@ const Settings = () => {
       });
 
       if (response.ok) {
-        setSettings(prevSettings => prevSettings.filter(setting => setting.id !== settingId));
+        setSettings(prevSettings => prevSettings.filter(setting => setting.id !== settingToDelete));
         toast.success('Setting deleted successfully');
       } else {
         const errMessage = await response.json();
@@ -265,7 +273,7 @@ const Settings = () => {
                     ) : (
                       <>
                         <button onClick={() => { setEditMode(setting.id); setEditValue(setting.value); }}>Edit</button>
-                        <button onClick={() => handleDelete(setting.id)}>Delete</button>
+                        <button onClick={() => handleDelete(setting.id)}>Delete</button> {/* Call handleDelete here */}
                       </>
                     )}
                   </>
@@ -275,6 +283,11 @@ const Settings = () => {
           ))}
         </tbody>
       </table>
+      <DeleteModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)} // Close modal on cancel
+        onConfirm={confirmDelete} // Confirm delete on modal confirm button
+      />
       <ToastContainer />
     </div>
   );

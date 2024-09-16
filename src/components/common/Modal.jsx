@@ -28,7 +28,7 @@ const GenericModal = ({ type, mode, item, onClose, onSubmit }) => {
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
+        <Typography id="modal-modal-title" variant="h4" component="h2">
           {mode === 'edit'
             ? `Edit ${type.charAt(0).toUpperCase() + type.slice(1)}`
             : `Add ${type.charAt(0).toUpperCase() + type.slice(1)}`}
@@ -45,7 +45,7 @@ const GenericModal = ({ type, mode, item, onClose, onSubmit }) => {
           <ServiceAddForm onClose={onClose} onSubmit={onSubmit} />
         )}
         
-        <Button className="standard-btn" onClick={onClose}>Close</Button>
+        <button className="standard-del-btn" onClick={onClose}>Close</button>
       </Box>
     </Modal>
   );

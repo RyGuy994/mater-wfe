@@ -3,6 +3,7 @@ import { useTable, useSortBy, useFilters } from 'react-table';
 import { matchSorter } from 'match-sorter';
 import '../common/common.css';
 import '../common/Modal.css';
+import DeleteModal from '../common/DeleteModal';
 import GenericModal from '../common/Modal'; // Adjust the path
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -32,7 +33,6 @@ fuzzyTextFilterFn.autoRemove = val => !val;
 const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [assetToDelete, setAssetToDelete] = useState(null);
-  const [confirmText, setConfirmText] = useState('');
 
   const data = useMemo(() => assets, [assets]);
   const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -68,11 +68,7 @@ const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
   };
 
   const confirmDelete = async () => {
-    if (confirmText !== 'del') {
-        toast.error('Please type "del" to confirm');
-        return;
-    }
-
+    setShowDeleteModal(false); // Close the modal
     try {
         const deleteUrl = `${baseUrl}/assets/asset_delete/${assetToDelete.id}`;
         const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
@@ -147,6 +143,7 @@ const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
         Header: 'Actions',
         Cell: ({ row }) => (
           <div>
+            <button className="standard-btn" onClick={() => placeholder}>Asset Page</button>
             <button className="standard-btn" onClick={() => openEditModal(row.original)}>Edit</button>
             <button className="standard-btn" onClick={() => handleDownload(row.original)}>Download</button>
             <button className="standard-del-btn" onClick={() => handleDelete(row.original)}>Delete</button>
@@ -187,23 +184,11 @@ const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
 
   return (
     <div style={{ maxHeight: '90vh', overflowY: 'auto' }}>
-      {showDeleteModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h4>Confirm Deletion</h4>
-            <p>Please type "del" to confirm the deletion of this asset:</p>
-            <input
-              type="text"
-              value={confirmText}
-              onChange={(e) => setConfirmText(e.target.value)}
-            />
-            <div className="modal-actions">
-              <button className="standard-del-btn" onClick={confirmDelete}>Delete</button>
-              <button className="standard-btn" onClick={() => setShowDeleteModal(false)}>Cancel</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <DeleteModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)} // Close modal on cancel
+        onConfirm={confirmDelete} // Confirm delete on modal confirm button
+      />
       <ToastContainer />
       <table {...getTableProps()} className="standard-table">
         <thead>
