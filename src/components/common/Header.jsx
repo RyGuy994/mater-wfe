@@ -96,6 +96,10 @@ const Header = ({ isLoggedIn, handleLogout }) => {
           onSubmit={() => {
             // Define what happens after form submission
             handleCloseModal();
+            // Check if we're on the /assets-view-all page
+            if (location.pathname === '/assets-view-all') {
+              fetchAssets(); // Call fetchAssets function
+            }
           }}
         />
       )}

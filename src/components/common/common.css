@@ -158,3 +158,50 @@ input:checked + .slider:before {
 .standard-table tr:last-child td:last-child {
     border-bottom-right-radius: 10px; /* Rounded bottom right corner */
 }
+
+
+.drop-area {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s;
+  }
+  
+  .drop-area.highlight {
+    border-color: #4CAF50;
+  }
+  
+  .image-preview {
+    max-width: 200px;
+    max-height: 200px;
+    border: 3px solid green;
+    margin-bottom: 10px;
+  }
+  
+
+  .image-preview-container {
+    position: relative;
+    display: inline-block;
+  }
+   
+  .remove-image-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .remove-image-btn:hover {
+    background-color: darkred;
+  }
