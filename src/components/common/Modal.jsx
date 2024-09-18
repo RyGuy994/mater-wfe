@@ -1,6 +1,5 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import AssetAddForm from '../assets/AssetAddForm.jsx';
@@ -19,7 +18,13 @@ const style = {
   p: 4,
 };
 
-const GenericModal = ({ type, mode, item, onClose, onSubmit }) => {
+const GenericModal = ({ type, mode, item, onClose, onSubmit, fetchAssets }) => {
+  const handleSubmit = async (data) => {
+    await onSubmit(data); // Call the passed onSubmit function
+    await fetchAssets(); // Refresh the asset list
+    onClose(); // Close the modal
+  };
+
   return (
     <Modal
       open={true}
@@ -36,13 +41,13 @@ const GenericModal = ({ type, mode, item, onClose, onSubmit }) => {
         
         {/* Render the appropriate form based on the type and mode */}
         {type === 'asset' && mode === 'edit' && (
-          <AssetEditForm asset={item} onSubmit={onSubmit} onClose={onClose} />
+          <AssetEditForm asset={item} onSubmit={handleSubmit} onClose={onClose} />
         )}
         {type === 'asset' && mode === 'add' && (
-          <AssetAddForm onClose={onClose} onSubmit={onSubmit} />
+          <AssetAddForm onClose={onClose} onSubmit={handleSubmit} />
         )}
         {type === 'service' && mode === 'add' && (
-          <ServiceAddForm onClose={onClose} onSubmit={onSubmit} />
+          <ServiceAddForm onClose={onClose} onSubmit={handleSubmit} />
         )}
         
         <button className="standard-del-btn" onClick={onClose}>Close</button>

@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+/* src/components/assets/AssetEditForm.jsx */
+
+import React, { useState, useEffect, useRef } from 'react';
 import '../common/form.css'; // Use form.css for styling
 import '../common/common.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
 
 const AssetEditForm = ({ asset, onSubmit, onClose }) => {
+  const navigate = useNavigate(); // Ensure this is correctly initialized
   const [assetData, setAssetData] = useState({
     name: '',
     asset_sn: '',
@@ -16,6 +20,9 @@ const AssetEditForm = ({ asset, onSubmit, onClose }) => {
   const [statusOptions, setStatusOptions] = useState([]);
   const [imagePreview, setImagePreview] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [isDragActive, setIsDragActive] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // Added for form submission
+  const fileInputRef = useRef(null); // Reference for the hidden file input
 
   useEffect(() => {
     if (asset) {
@@ -67,10 +74,26 @@ const AssetEditForm = ({ asset, onSubmit, onClose }) => {
     fetchStatusOptions();
   }, []);
 
+  // Handle input changes and file selection
   const handleChange = (e) => {
     const { name, value, type } = e.target;
     if (type === 'file') {
       const file = e.target.files[0] || null;
+
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/png'];
+      if (file && !validTypes.includes(file.type)) {
+        toast.error('Invalid file type. Only JPEG and PNG are allowed.');
+        return;
+      }
+
+      // Validate file size (5MB limit)
+      const maxSize = 5 * 1024 * 1024;
+      if (file && file.size > maxSize) {
+        toast.error('File is too large. Maximum allowed size is 5MB.');
+        return;
+      }
+
       setAssetData({ ...assetData, image: file });
 
       if (file) {
@@ -87,11 +110,12 @@ const AssetEditForm = ({ asset, onSubmit, onClose }) => {
     }
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setIsSubmitting(true);
+  
     const jwtToken = localStorage.getItem('jwt');
-
     const formData = new FormData();
     formData.append('name', assetData.name);
     formData.append('asset_sn', assetData.asset_sn);
@@ -99,32 +123,75 @@ const AssetEditForm = ({ asset, onSubmit, onClose }) => {
     formData.append('acquired_date', assetData.acquired_date);
     formData.append('asset_status', assetData.asset_status);
     formData.append('jwt', jwtToken);
-
     if (assetData.image) {
       formData.append('image', assetData.image);
     }
-
+  
+    console.log('Form Data:', Array.from(formData.entries()));
+  
     try {
       const baseUrl = import.meta.env.VITE_BASE_URL;
       const EditAssetUrl = `${baseUrl}/assets/asset_edit/${asset.id}`;
-
       const response = await fetch(EditAssetUrl, {
         method: 'POST',
         body: formData,
       });
-
+  
       const responseData = await response.json();
-
-      if (response.ok) {
-        toast.success(responseData.message || 'Asset updated successfully');
-        onSubmit();
-      } else {
+      if (!response.ok) {
         throw new Error(responseData.error || 'Failed to update asset');
       }
+  
+      toast.success(responseData.message || 'Asset updated successfully');
+      onClose(); // Close the modal on successful submission
+  
+      // Redirect to AssetViewAll page
+      navigate('/assets-view-all'); // Update the route as needed
     } catch (error) {
       console.error('Failed to update asset:', error.message);
       setErrorMessage('Failed to update asset');
+      toast.error('Failed to update asset: ' + error.message);
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  // Handle drag events for file drop area
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragActive(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragActive(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragActive(false);
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      setAssetData({ ...assetData, image: file });
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Trigger file input dialog on drop area click
+  const handleDropAreaClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  // Handle confirmation of asset addition
+  const handleRemoveImage = (e) => {
+    e.stopPropagation(); // Prevent click from triggering file input
+    setAssetData({ ...assetData, image: null });
+    setImagePreview(null);
   };
 
   return (
@@ -189,27 +256,50 @@ const AssetEditForm = ({ asset, onSubmit, onClose }) => {
           ))}
         </select><br />
         <label htmlFor="image">Asset Image:</label>
-        <input
-          type="file"
-          id="image"
-          name="image"
-          className="form-input"
-          onChange={handleChange}
-          accept="image/*"
-        /><br />
-        {imagePreview && (
-          <div id="image-preview" className="image-preview">
-            <img
-              src={imagePreview}
-              alt="Image Preview"
-              style={{ maxWidth: '200px', maxHeight: '200px', border: '3px solid green', marginBottom: '10px' }}
-            />
-          </div>
-        )}
-        <button type="submit" className="standard-btn">Save</button>
+        <div
+          className={`drop-area ${isDragActive ? 'highlight' : ''}`}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          onClick={handleDropAreaClick} // Trigger file input dialog on click
+        >
+          <input
+            type="file"
+            id="image"
+            name="image"
+            className="form-input"
+            ref={fileInputRef} // Hidden file input reference
+            onChange={handleChange}
+            accept="image/*"
+            style={{ display: 'none' }} // Hide the file input
+            aria-label="Upload an image for the asset"
+          />
+          {imagePreview ? (
+            <div className="image-preview-container">
+              <img
+                src={imagePreview}
+                alt="Image Preview"
+                className="image-preview"
+                style={{ maxWidth: '200px', maxHeight: '200px', border: '3px solid green', marginBottom: '10px' }}
+              />
+              <button
+                type="button"
+                className="remove-image-btn"
+                onClick={handleRemoveImage}
+              >
+                X
+              </button>
+            </div>
+          ) : (
+            <p>Drag & drop an image or click to upload</p>
+          )}
+        </div><br />
+        <button type="submit" className="standard-btn" disabled={isSubmitting}>
+          {isSubmitting ? 'Saving...' : 'Save'}
+        </button>
         <button type="button" className="standard-del-btn" onClick={onClose}>Cancel</button>
       </form>
-      {errorMessage && <p className="error">{errorMessage}</p>}
+      {errorMessage && <p className="error-message">{errorMessage}</p>}
       <ToastContainer />
     </div>
   );

@@ -1,10 +1,13 @@
+/* src/components/assets/AssetViewAll.jsx */
+
 import React, { useEffect, useState, useMemo } from 'react';
 import { useTable, useSortBy, useFilters } from 'react-table';
 import { matchSorter } from 'match-sorter';
 import '../common/common.css';
 import '../common/Modal.css';
-import DeleteModal from '../common/DeleteModal';
-import GenericModal from '../common/Modal'; // Adjust the path
+import './AssetViewAll.css';
+import DeleteModal from '../common/DeleteModal.jsx';
+import GenericModal from '../common/Modal.jsx';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -31,6 +34,7 @@ const fuzzyTextFilterFn = (rows, id, filterValue) => {
 fuzzyTextFilterFn.autoRemove = val => !val;
 
 const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
+  console.log('AssetTable props:', assets); // Ensure assets are being passed correctly
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [assetToDelete, setAssetToDelete] = useState(null);
 
@@ -144,7 +148,7 @@ const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
         Cell: ({ row }) => (
           <div>
             <button className="standard-btn" onClick={() => placeholder}>Asset Page</button>
-            <button className="standard-btn" onClick={() => openEditModal(row.original)}>Edit</button>
+            <button className="standard-btn" onClick={() => openEditModal(row.original)}>Quick Edit</button>
             <button className="standard-btn" onClick={() => handleDownload(row.original)}>Download</button>
             <button className="standard-del-btn" onClick={() => handleDelete(row.original)}>Delete</button>
           </div>
@@ -246,7 +250,9 @@ const AssetViewAll = () => {
   
       const data = await response.json();
       if (response.ok) {
-        setAssets(data);
+        toast.success("Assets successfully fetched!");
+        console.log("Fetched Assets:", data.assets); // Access assets from data.assets
+        setAssets(data.assets); // Update to use data.assets
       } else {
         throw new Error(data.error || 'Failed to fetch assets');
       }
@@ -270,47 +276,65 @@ const AssetViewAll = () => {
     setModalOpen(false);   // Close modal
     setEditAsset(null);    // Clear edit asset
     setModalType(null);    // Reset modal type
+    fetchAssets(); // Refresh assets data after closing the modal
   };
 
   const handleEditSubmit = async (updatedAsset) => {
+    if (!updatedAsset || !updatedAsset.id) {
+      console.error('Invalid asset data:', updatedAsset);
+      toast.error('Invalid asset data');
+      return;
+    }
+  
     const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
     const baseUrl = import.meta.env.VITE_BASE_URL;
   
-    const response = await fetch(`${baseUrl}/assets/asset_edit/${updatedAsset.id}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        ...updatedAsset,
-        jwt: jwtToken // Include JWT token
-      })
-    });
+    try {
+      const response = await fetch(`${baseUrl}/assets/asset_edit/${updatedAsset.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ...updatedAsset,
+          jwt: jwtToken // Include JWT token
+        })
+      });
   
-    const data = await response.json();
-    if (response.ok) {
-      await fetchAssets(); // Re-fetch the assets data after the edit
-      closeModal();
-    } else {
-      console.error('Failed to update asset:', data.error);
+      const data = await response.json();
+      if (response.ok) {
+        console.log('Asset updated successfully:', data);
+        await fetchAssets(); // Re-fetch the assets data after the edit
+        closeModal(); // Close the modal
+      } else {
+        console.error('Failed to update asset:', data.error);
+        toast.error('Failed to update asset');
+      }
+    } catch (error) {
+      console.error('Failed to update asset:', error.message);
+      toast.error('Failed to update asset');
     }
   };
+   
 
   return (
-    <div id="content">
-      <h3>All Assets</h3>
-      <AssetTable assets={assets} openEditModal={openEditModal} fetchAssets={fetchAssets} />
-      {modalOpen && (
-        <GenericModal
-          type={modalType}      // 'asset' or 'service'
-          mode="edit"           // Set mode to 'edit'
-          item={editAsset}      // Pass the asset to be edited
-          onClose={closeModal}  // Function to close modal
-          onSubmit={handleEditSubmit} // Function to handle submit
-          fetchAssets={fetchAssets}
-        />
-)}
-    </div>
+<div id="content">
+  <h3>All Assets</h3>
+  <div className="assets-container">
+    <AssetTable assets={assets} openEditModal={openEditModal} fetchAssets={fetchAssets} />
+  </div>
+  {modalOpen && (
+    <GenericModal
+      type={modalType} // 'asset' or 'service'
+      mode="edit" // Set mode to 'edit'
+      item={editAsset} // Pass the asset to be edited
+      onClose={closeModal} // Function to close modal
+      onSubmit={modalType === 'asset' ? handleEditSubmit : handleAddSubmit} // Function to handle submit
+      fetchAssets={fetchAssets} // Function to re-fetch assets
+    />
+  )}
+  <ToastContainer />
+</div>
   );
 };
 

@@ -1,24 +1,19 @@
+/* src/components/common/ConfirmationModal.css */
+
+/* Ensure that assets-container handles overflow and is sized properly */
 .assets-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-  
-  .asset-card {
-    border: 1px solid #ccc;
-    padding: 16px;
-    border-radius: 8px;
-    width: 200px;
-  }
-  
-  .asset-card img {
-    max-width: 100%;
-    height: auto;
-    margin-top: 8px;
-  }
-  
-  .error-message {
-    color: red;
-    margin-top: 16px;
-  }
-  
+  flex: 1; /* Allows the container to grow and fill available space */
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding-bottom: 60px; /* Add padding to ensure last row is visible */
+}
+
+/* Ensure that the content container takes up the full height of the viewport */
+#content {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 40px); /* Adjust height based on header/footer sizes */
+  width: 100%; /* Ensure full width */
+  overflow: hidden; /* Prevent overflow in the main content area */
+}
