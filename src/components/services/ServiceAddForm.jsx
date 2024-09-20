@@ -107,22 +107,33 @@ const ServiceAddForm = ({ onClose }) => {
           },
           body: JSON.stringify({ jwt: jwtToken }),
         });
-
+  
         if (!response.ok) {
           const errorResponse = await response.json();
           console.error('Error fetching assets:', errorResponse);
           return;
         }
-
+  
         const assetsData = await response.json();
-        setAssets(assetsData);
-        setFilteredAssets(assetsData);
+        console.log('Assets data:', assetsData); // Check the assets data
+  
+        // You need to access the 'assets' key from the response
+        const assetsArray = assetsData.assets;
+  
+        // Ensure that assetsArray is indeed an array before setting it
+        if (Array.isArray(assetsArray)) {
+          setAssets(assetsArray);  // Set assets state with the array
+          setFilteredAssets(assetsArray); // Also set filteredAssets
+        } else {
+          console.error('Assets data is not an array:', assetsArray);
+          setAssets([]); // Set empty array if data is not in expected format
+        }
       } catch (error) {
         console.error('Error during fetch operation:', error);
       }
     };
     fetchAssets();
-  }, []);
+  }, []);  
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -140,7 +151,9 @@ const ServiceAddForm = ({ onClose }) => {
     const value = e.target.value;
     setSearchTerm(value);
 
-    const filtered = assets.filter(asset => asset.name.toLowerCase().includes(value.toLowerCase()));
+    const filtered = assets.filter(asset => 
+      asset.name.toLowerCase().includes(value.toLowerCase())
+    );
     setFilteredAssets(filtered);
   };
 
@@ -273,8 +286,9 @@ const ServiceAddForm = ({ onClose }) => {
           value={serviceData.service_date}
           onChange={handleChange}
           required
-        /><br />
-        <label htmlFor="service_cost">Service Cost:</label>
+        />
+        <br />
+        <label htmlFor="service_cost" className="required-field">Service Cost:</label>
         <input
           type="number"
           id="service_cost"
@@ -282,6 +296,7 @@ const ServiceAddForm = ({ onClose }) => {
           className="form-input"
           value={serviceData.service_cost}
           onChange={handleChange}
+          required
         /><br />
         <label htmlFor="service_status" className="required-field">Service Status:</label>
         <select
@@ -305,31 +320,36 @@ const ServiceAddForm = ({ onClose }) => {
           value={serviceData.service_notes}
           onChange={handleChange}
         ></textarea><br />
-        <label htmlFor="attachments">Upload attachments to service:</label>
+        <label htmlFor="attachments">Attachments:</label>
         <input
           type="file"
           id="attachments"
           name="attachments"
           className="form-input"
-          multiple
           onChange={handleChange}
+          multiple
         /><br />
-        <div className="attachments-preview">
-          {attachmentsPreview.map((preview, index) => (
-            <img key={index} src={preview} alt={`Attachment Preview ${index + 1}`} />
-          ))}
-        </div>
+        {attachmentsPreview.map((preview, index) => (
+          <img
+            key={index}
+            src={preview}
+            alt={`Attachment preview ${index}`}
+            className="attachment-preview"
+          />
+        ))}
+        <br />
         <button type="submit" className="standard-btn">Add Service</button>
-        <button type="button" className="standard-del-btn" onClick={onClose}>Cancel</button>
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
       </form>
+      <ToastContainer />
       {showConfirmation && (
         <ConfirmationModal
+          title="Service Added"
+          message="Service has been added successfully."
           onConfirm={handleConfirm}
           onCancel={handleCancel}
-          message="Service added successfully. Do you want to add another service?"
         />
       )}
-      <ToastContainer />
     </div>
   );
 };

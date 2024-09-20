@@ -64,10 +64,13 @@ const Header = ({ isLoggedIn, handleLogout }) => {
                 <Link to="/services-view-all">View All Services</Link>
               </div>
             </li>
-            <li>
-              <Link to="/settings">
-                <span>Settings</span>
-              </Link>
+            <li className="dropdown">
+              <span>Settings</span>
+              <div className="dropdown-content">
+                <Link to="/settings-global">Global Settings</Link>
+                <Link to="/settings-local">Local Settings</Link>
+                <Link to="/settings-user">Add/Edit Users</Link>
+              </div>
             </li>
             <li>
               <span onClick={handleLogout}>Logout</span>
@@ -96,10 +99,6 @@ const Header = ({ isLoggedIn, handleLogout }) => {
           onSubmit={() => {
             // Define what happens after form submission
             handleCloseModal();
-            // Check if we're on the /assets-view-all page
-            if (location.pathname === '/assets-view-all') {
-              fetchAssets(); // Call fetchAssets function
-            }
           }}
         />
       )}
