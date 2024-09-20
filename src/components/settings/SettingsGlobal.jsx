@@ -1,18 +1,20 @@
-/* src/components/Settings.jsx */
+/* src/components/SettingsGlobal.jsx */
+
 import React, { useEffect, useState } from 'react';
-import './settings.css';
+import './settingsShared.css';
+import '../common/common.css';
 import DeleteModal from '../common/DeleteModal';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const Settings = () => {
+const SettingsGlobal = () => {
   const [settings, setSettings] = useState([]);
   const [error, setError] = useState('');
   const [editMode, setEditMode] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false); // Modal visibility state
   const [settingToDelete, setSettingToDelete] = useState(null); // Store the ID of the setting to delete
   const [editValue, setEditValue] = useState('');
-  const [newSetting, setNewSetting] = useState({ whatfor: 'service_status', value: '', globalsetting: false });
+  const [newSetting, setNewSetting] = useState({ whatfor: 'service_status', value: '', globalsetting: true });
   const baseUrl = import.meta.env.VITE_BASE_URL; // Use your base URL
 
   useEffect(() => {
@@ -179,7 +181,7 @@ const Settings = () => {
       if (response.ok) {
         const newAddedSetting = await response.json();
         setSettings([...settings, newAddedSetting]);
-        setNewSetting({ whatfor: 'service_status', value: '', globalsetting: false });
+        setNewSetting({ whatfor: 'service_status', value: '', globalsetting: true });
         toast.success('Setting added successfully');
       } else {
         const errMessage = await response.json();
@@ -194,7 +196,7 @@ const Settings = () => {
 
   return (
     <div className="scrollable-container">
-      <h1>Settings Page</h1>
+      <h1>Global Settings Page</h1>
       {error && <div className="error">{error}</div>}
       <form onSubmit={handleAddSetting} className="add-setting-form">
         <label>
@@ -224,7 +226,7 @@ const Settings = () => {
             onChange={(e) => setNewSetting({ ...newSetting, globalsetting: e.target.checked })}
           />
         </label>
-        <button type="submit">Add Setting</button>
+        <button className="standard-btn" type="submit">Add Setting</button>
       </form>
       <table>
         <thead>
@@ -247,7 +249,7 @@ const Settings = () => {
                   />
                 ) : (
                   <span>
-                    {['global_service_status', 'global_asset_status', 'global_service_type'].includes(setting.whatfor) ? (
+                    {['allowselfregister', 'global_service_status', 'global_asset_status', 'global_service_type'].includes(setting.whatfor) ? (
                       <label className="switch">
                         <input 
                           type="checkbox" 
@@ -267,13 +269,13 @@ const Settings = () => {
                   <>
                     {editMode === setting.id ? (
                       <>
-                        <button onClick={() => handleEdit(setting.id)}>Save</button>
-                        <button onClick={() => { setEditMode(null); setEditValue(''); }}>Cancel</button>
+                        <button className="standard-btn" onClick={() => handleEdit(setting.id)}>Save</button>
+                        <button className="standard-btn" onClick={() => { setEditMode(null); setEditValue(''); }}>Cancel</button>
                       </>
                     ) : (
                       <>
-                        <button onClick={() => { setEditMode(setting.id); setEditValue(setting.value); }}>Edit</button>
-                        <button onClick={() => handleDelete(setting.id)}>Delete</button> {/* Call handleDelete here */}
+                        <button className="standard-btn" onClick={() => { setEditMode(setting.id); setEditValue(setting.value); }}>Edit</button>
+                        <button className="standard-del-btn" onClick={() => handleDelete(setting.id)}>Delete</button> {/* Call handleDelete here */}
                       </>
                     )}
                   </>
@@ -293,4 +295,4 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default SettingsGlobal;

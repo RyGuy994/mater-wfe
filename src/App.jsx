@@ -6,7 +6,9 @@ import Login from './components/auth/Login';
 import AssetViewAll from './components/assets/AssetViewAll';
 import Signup from './components/auth/Signup';
 import ServiceViewAll from './components/services/ServiceViewAll';
-import Settings from './components/settings/Settings';
+import SettingsGlobal from './components/settings/SettingsGlobal';
+import SettingsLocal from './components/settings/SettingsLocal';
+import UsersManagement from './components/settings/SettingsUser';
 import './App.css';
 
 function App() {
@@ -41,7 +43,9 @@ function App() {
           <Route path="/services-view-all" element={<ServiceViewAll />} />
           <Route path="/login" element={<Login handleLogin={handleLogin} setError={setError} />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/settings" element={isLoggedIn ? <Settings /> : <Navigate to="/" />} />
+          <Route path="/settings-global" element={isLoggedIn ? <SettingsGlobal /> : <Navigate to="/" />} />
+          <Route path="/settings-local" element={isLoggedIn ? <SettingsLocal/> : <Navigate to="/" />} />
+          <Route path="/settings-user" element={isLoggedIn ? <UsersManagement /> : <Navigate to="/" />} />
           <Route path="/" element={<Login handleLogin={handleLogin} setError={setError} />} />
         </Routes>
         {error && <div className="error">{error}</div>}
