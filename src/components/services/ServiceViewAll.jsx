@@ -138,6 +138,7 @@ const ServiceTable = ({ services }) => {
 
 const ServiceViewAll = () => {
   const [services, setServices] = useState([]);
+  const [needsFetch, setNeedsFetch] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
 
   const fetchServices = async () => {
@@ -182,8 +183,14 @@ const ServiceViewAll = () => {
   };
 
   useEffect(() => {
-    fetchServices();
-  }, []);
+    if (needsFetch) {
+      const timer = setTimeout(() => {
+        fetchServices().then(() => setNeedsFetch(false)); // Reset after fetching
+      }, 120); // Add a delay to debounce (120ms here)
+  
+      return () => clearTimeout(timer); // Clean up the timer
+    }
+  }, [needsFetch]);
 
   return (
     <div id="content">
