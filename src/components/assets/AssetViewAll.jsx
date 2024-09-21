@@ -37,6 +37,7 @@ const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
   console.log('AssetTable props:', assets); // Ensure assets are being passed correctly
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [assetToDelete, setAssetToDelete] = useState(null);
+  const [needsFetch, setNeedsFetch] = useState(true);
 
   const data = useMemo(() => assets, [assets]);
   const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -93,7 +94,6 @@ const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
             toast.success(responseData.message || 'Asset deleted successfully');
             setShowDeleteModal(false);
             setAssetToDelete(null);
-            setConfirmText('');
             await fetchAssets();
         } else {
             throw new Error(responseData.error || 'Failed to delete asset');
@@ -234,6 +234,7 @@ const AssetViewAll = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState(null); // 'asset' or 'service'
   const [editAsset, setEditAsset] = useState(null); // Asset to edit
+  const [needsFetch, setNeedsFetch] = useState(true); // Add needsFetch state here
 
   const fetchAssets = async () => {
     const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
@@ -263,8 +264,14 @@ const AssetViewAll = () => {
   };
 
   useEffect(() => {
-    fetchAssets();
-  }, []);
+    if (needsFetch) {
+      const timer = setTimeout(() => {
+        fetchAssets().then(() => setNeedsFetch(false)); // Reset after fetching
+      }, 120); // Add a delay to debounce (120ms here)
+  
+      return () => clearTimeout(timer); // Clean up the timer
+    }
+  }, [needsFetch]);  
 
   const openEditModal = (asset) => {
     setEditAsset(asset);   // Pass the asset to be edited
@@ -276,7 +283,7 @@ const AssetViewAll = () => {
     setModalOpen(false);   // Close modal
     setEditAsset(null);    // Clear edit asset
     setModalType(null);    // Reset modal type
-    fetchAssets(); // Refresh assets data after closing the modal
+    setNeedsFetch(true);   // Trigger a refetch after modal operations
   };
 
   const handleEditSubmit = async (updatedAsset) => {
@@ -304,18 +311,15 @@ const AssetViewAll = () => {
       const data = await response.json();
       if (response.ok) {
         console.log('Asset updated successfully:', data);
-        await fetchAssets(); // Re-fetch the assets data after the edit
-        closeModal(); // Close the modal
+        closeModal(); // Close modal after successful edit
       } else {
-        console.error('Failed to update asset:', data.error);
-        toast.error('Failed to update asset');
+        throw new Error(data.error || 'Failed to update asset');
       }
     } catch (error) {
       console.error('Failed to update asset:', error.message);
       toast.error('Failed to update asset');
     }
   };
-   
 
   return (
 <div id="content">
