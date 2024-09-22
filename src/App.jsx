@@ -9,6 +9,7 @@ import ServiceViewAll from './components/services/ServiceViewAll';
 import SettingsGlobal from './components/settings/SettingsGlobal';
 import SettingsLocal from './components/settings/SettingsLocal';
 import UsersManagement from './components/settings/SettingsUser';
+import Profile from './components/settings/Profile';
 import './App.css';
 
 function App() {
@@ -44,8 +45,9 @@ function App() {
           <Route path="/login" element={<Login handleLogin={handleLogin} setError={setError} />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/settings-global" element={isLoggedIn ? <SettingsGlobal /> : <Navigate to="/" />} />
-          <Route path="/settings-local" element={isLoggedIn ? <SettingsLocal/> : <Navigate to="/" />} />
+          <Route path="/settings-local" element={isLoggedIn ? <SettingsLocal /> : <Navigate to="/" />} />
           <Route path="/settings-user" element={isLoggedIn ? <UsersManagement /> : <Navigate to="/" />} />
+          <Route path="/profile" element={isLoggedIn ? <Profile /> : <Navigate to="/" />} />
           <Route path="/" element={<Login handleLogin={handleLogin} setError={setError} />} />
         </Routes>
         {error && <div className="error">{error}</div>}

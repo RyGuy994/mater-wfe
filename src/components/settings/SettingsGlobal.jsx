@@ -1,5 +1,3 @@
-/* src/components/SettingsGlobal.jsx */
-
 import React, { useEffect, useState } from 'react';
 import './settingsShared.css';
 import '../common/common.css';
@@ -11,33 +9,29 @@ const SettingsGlobal = () => {
   const [settings, setSettings] = useState([]);
   const [error, setError] = useState('');
   const [editMode, setEditMode] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false); // Modal visibility state
-  const [settingToDelete, setSettingToDelete] = useState(null); // Store the ID of the setting to delete
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [settingToDelete, setSettingToDelete] = useState(null);
   const [editValue, setEditValue] = useState('');
   const [newSetting, setNewSetting] = useState({ whatfor: 'service_status', value: '', globalsetting: true });
-  const baseUrl = import.meta.env.VITE_BASE_URL; // Use your base URL
+  const baseUrl = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
     const fetchSettings = async () => {
       try {
         const settingUrl = `${baseUrl}/settings/appsettings`;
-        const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
+        const jwtToken = localStorage.getItem('jwt');
 
         if (!jwtToken) {
           setError('JWT token is missing');
           return;
         }
 
-        console.log('Fetching settings with JWT:', jwtToken);
-
         const response = await fetch(settingUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            jwt: jwtToken // Include JWT token in the body
-          }),
+          body: JSON.stringify({ jwt: jwtToken }), // Send the JWT in the body
         });
 
         if (response.ok) {
@@ -57,6 +51,8 @@ const SettingsGlobal = () => {
 
   const handleToggle = async (settingId, currentValue) => {
     const newValue = currentValue === 'Yes' ? 'No' : 'Yes';
+    const jwtToken = localStorage.getItem('jwt');
+
     try {
       const updateUrl = `${baseUrl}/settings/appsettings/update`;
       const response = await fetch(updateUrl, {
@@ -65,6 +61,7 @@ const SettingsGlobal = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          jwt: jwtToken, // Include JWT in the body
           id: settingId,
           value: newValue
         }),
@@ -89,6 +86,8 @@ const SettingsGlobal = () => {
   };
 
   const handleEdit = async (settingId) => {
+    const jwtToken = localStorage.getItem('jwt');
+
     try {
       const updateUrl = `${baseUrl}/settings/appsettings/update`;
       const response = await fetch(updateUrl, {
@@ -97,6 +96,7 @@ const SettingsGlobal = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          jwt: jwtToken, // Include JWT in the body
           id: settingId,
           value: editValue
         }),
@@ -122,24 +122,23 @@ const SettingsGlobal = () => {
     }
   };
 
-  // Add the handleDelete function to show the modal
   const handleDelete = (settingId) => {
-    setSettingToDelete(settingId); // Set the setting ID for deletion
-    setShowDeleteModal(true); // Show the delete confirmation modal
+    setSettingToDelete(settingId);
+    setShowDeleteModal(true);
   };
 
   const confirmDelete = async () => {
-    setShowDeleteModal(false); // Close the modal
-    try {
-      const jwtToken = localStorage.getItem('jwt');
-      const deleteUrl = `${baseUrl}/settings/appsettings/delete/${settingToDelete}`;
+    setShowDeleteModal(false);
+    const jwtToken = localStorage.getItem('jwt');
 
+    try {
+      const deleteUrl = `${baseUrl}/settings/appsettings/delete/${settingToDelete}`;
       const response = await fetch(deleteUrl, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${jwtToken}`
         },
+        body: JSON.stringify({ jwt: jwtToken }), // Include JWT in the body
       });
 
       if (response.ok) {
@@ -158,24 +157,25 @@ const SettingsGlobal = () => {
 
   const handleAddSetting = async (e) => {
     e.preventDefault();
+    const jwtToken = localStorage.getItem('jwt');
+
+    if (!jwtToken) {
+      setError('JWT token is missing');
+      toast.error('JWT token is missing');
+      return;
+    }
+
     try {
-      const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
-
-      if (!jwtToken) {
-        setError('JWT token is missing');
-        toast.error('JWT token is missing');
-        return;
-      }
-
       const addUrl = `${baseUrl}/settings/appsettings/add`;
-      console.log('Adding new setting with JWT:', jwtToken);
-
       const response = await fetch(addUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ...newSetting, jwt: jwtToken }),
+        body: JSON.stringify({
+          jwt: jwtToken, // Include JWT in the body
+          ...newSetting
+        }),
       });
 
       if (response.ok) {
@@ -265,7 +265,7 @@ const SettingsGlobal = () => {
                 )}
               </td>
               <td>
-                {['service_status', 'asset_status','service_type'].includes(setting.whatfor) && (
+                {['service_status', 'asset_status', 'service_type'].includes(setting.whatfor) && (
                   <>
                     {editMode === setting.id ? (
                       <>
@@ -275,7 +275,7 @@ const SettingsGlobal = () => {
                     ) : (
                       <>
                         <button className="standard-btn" onClick={() => { setEditMode(setting.id); setEditValue(setting.value); }}>Edit</button>
-                        <button className="standard-del-btn" onClick={() => handleDelete(setting.id)}>Delete</button> {/* Call handleDelete here */}
+                        <button className="standard-del-btn" onClick={() => handleDelete(setting.id)}>Delete</button>
                       </>
                     )}
                   </>
@@ -287,8 +287,8 @@ const SettingsGlobal = () => {
       </table>
       <DeleteModal
         isOpen={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)} // Close modal on cancel
-        onConfirm={confirmDelete} // Confirm delete on modal confirm button
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={confirmDelete}
       />
       <ToastContainer />
     </div>
