@@ -67,6 +67,7 @@ const Header = ({ isLoggedIn, handleLogout }) => {
             <li className="dropdown">
               <span>Settings</span>
               <div className="dropdown-content">
+                <Link to="/profile">My Profile</Link>
                 <Link to="/settings-global">Global Settings</Link>
                 <Link to="/settings-local">Local Settings</Link>
                 <Link to="/settings-user">Add/Edit Users</Link>

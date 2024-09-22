@@ -21,7 +21,6 @@ const style = {
 const GenericModal = ({ type, mode, item, onClose, onSubmit, fetchAssets }) => {
   const handleSubmit = async (data) => {
     await onSubmit(data); // Call the passed onSubmit function
-    await fetchAssets(); // Refresh the asset list
     onClose(); // Close the modal
   };
 
