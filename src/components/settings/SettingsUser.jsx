@@ -186,6 +186,7 @@ const SettingsUser = () => {
             onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
           />
         </label>
+        <br></br>
         <label>
           Password: 
           <input
@@ -194,6 +195,7 @@ const SettingsUser = () => {
             onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
           />
         </label>
+        <br></br>
         <label>
           Admin: 
           <input
@@ -202,6 +204,7 @@ const SettingsUser = () => {
             onChange={(e) => setNewUser({ ...newUser, is_admin: e.target.checked })}
           />
         </label>
+        <br></br>
         <button className="standard-btn" type="submit">Add User</button>
       </form>
       <table>

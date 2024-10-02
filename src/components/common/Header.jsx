@@ -17,7 +17,7 @@ import Modal from '../common/Modal';
 const Header = ({ isLoggedIn, handleLogout }) => {
   // State to manage modal visibility and type
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalType, setModalType] = useState(null); // 'asset' or 'service'
+  const [modalType, setModalType] = useState(null); // 'asset', 'service', or 'bulk-upload'
 
   // Open Add Asset modal
   const openAddAssetModal = () => {
@@ -28,6 +28,12 @@ const Header = ({ isLoggedIn, handleLogout }) => {
   // Open Add Service modal
   const openAddServiceModal = () => {
     setModalType('service');
+    setModalOpen(true);
+  };
+
+  // Open Bulk Upload Assets modal
+  const openBulkUploadModal = () => {
+    setModalType('bulk-upload'); // Set type to 'bulk-upload'
     setModalOpen(true);
   };
 
@@ -54,6 +60,7 @@ const Header = ({ isLoggedIn, handleLogout }) => {
               <span>Assets</span>
               <div className="dropdown-content">
                 <span onClick={openAddAssetModal}>Add Asset</span>
+                <span onClick={openBulkUploadModal}>Bulk Upload Assets</span>
                 <Link to="/assets-view-all">View All Assets</Link>
               </div>
             </li>
@@ -94,7 +101,7 @@ const Header = ({ isLoggedIn, handleLogout }) => {
       {/* Conditionally render the Modal component */}
       {modalOpen && (
         <Modal
-          type={modalType}
+          type={modalType} // Pass the modal type (asset, service, or bulk)
           mode="add"
           onClose={handleCloseModal}
           onSubmit={() => {

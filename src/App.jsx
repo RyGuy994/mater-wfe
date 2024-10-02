@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Header from './components/common/Header';
 import Home from './components/Home';
@@ -17,10 +17,21 @@ function App() {
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    // Check local storage for a JWT to maintain login state
+    const token = localStorage.getItem('jwt');
+    if (token) {
+      // Validate token here if necessary, for now we'll just set the logged-in state
+      setIsLoggedIn(true);
+      setUsername(localStorage.getItem('username') || '');
+    }
+  }, []);
+
   const handleLogin = (username) => {
     setIsLoggedIn(true);
     setUsername(username);
     setError('');
+    localStorage.setItem('username', username); // Store username in local storage
   };
 
   const handleLogout = () => {
