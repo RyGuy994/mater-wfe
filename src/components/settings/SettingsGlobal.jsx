@@ -13,6 +13,8 @@ const SettingsGlobal = () => {
   const [settingToDelete, setSettingToDelete] = useState(null);
   const [editValue, setEditValue] = useState('');
   const [newSetting, setNewSetting] = useState({ whatfor: 'service_status', value: '', globalsetting: true });
+  const [tables, setTables] = useState([]); // State to hold tables list
+  const [selectedTables, setSelectedTables] = useState([]); // State for selected tables
   const baseUrl = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
@@ -46,8 +48,77 @@ const SettingsGlobal = () => {
       }
     };
 
+    const fetchTables = async () => {
+      try {
+        const tablesUrl = `${baseUrl}/get_tables`;
+        const jwtToken = localStorage.getItem('jwt');
+
+        const response = await fetch(tablesUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ jwt: jwtToken }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setTables(data.tables);
+        } else {
+          toast.error('Failed to fetch tables');
+        }
+      } catch (err) {
+        toast.error('An error occurred while fetching tables');
+      }
+    };
+
     fetchSettings();
+    fetchTables();
   }, [baseUrl]);
+
+  const handleTableSelection = (tableName) => {
+    setSelectedTables((prevSelectedTables) =>
+      prevSelectedTables.includes(tableName)
+        ? prevSelectedTables.filter((table) => table !== tableName)
+        : [...prevSelectedTables, tableName]
+    );
+  };
+
+  const handleExport = async () => {
+    if (selectedTables.length === 0) {
+      toast.error('No tables selected for export');
+      return;
+    }
+
+    try {
+      const exportUrl = `${baseUrl}/export_tables`;
+      const jwtToken = localStorage.getItem('jwt');
+
+      const response = await fetch(exportUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          jwt: jwtToken,
+          tables: selectedTables, // Send selected tables to backend
+        }),
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'exported_tables.zip';
+        link.click();
+        toast.success('Tables exported successfully');
+      } else {
+        toast.error('Failed to export tables');
+      }
+    } catch (err) {
+      toast.error('An error occurred during export');
+    }
+  };
 
   const handleToggle = async (settingId, currentValue) => {
     const newValue = currentValue === 'Yes' ? 'No' : 'Yes';
@@ -198,6 +269,32 @@ const SettingsGlobal = () => {
     <div className="scrollable-container">
       <h1>Global Settings Page</h1>
       {error && <div className="error">{error}</div>}
+      {/* Table export section */}
+      <div className="export-section">
+        <h2>Export Tables to CSV</h2>
+        {tables.length === 0 ? (
+          <p>No tables available for export</p>
+        ) : (
+          <div className="table-list">
+            {tables.map((table, index) => (
+              <div key={index}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={selectedTables.includes(table)}
+                    onChange={() => handleTableSelection(table)}
+                  />
+                  {table}
+                </label>
+              </div>
+            ))}
+          </div>
+        )}
+        <button className="standard-btn" onClick={handleExport}>
+          Export Selected Tables
+        </button>
+      </div>
+
       <form onSubmit={handleAddSetting} className="add-setting-form">
         <label>
           Setting Type:
