@@ -187,7 +187,7 @@ const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
   );
 
   return (
-    <div style={{ maxHeight: '90vh', overflowY: 'auto' }}>
+    <div className="standard-table-wrapper"> {/* Use the new wrapper class */}
       <DeleteModal
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)} // Close modal on cancel
@@ -199,7 +199,7 @@ const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
           {headerGroups.map(headerGroup => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps()} style={{ position: 'relative' }}>
+                <th {...column.getHeaderProps()}>
                   <div {...column.getSortByToggleProps()} style={{ display: 'inline-block', cursor: 'pointer' }}>
                     {column.render('Header')}
                     {column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}
@@ -216,7 +216,7 @@ const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map(cell => (
-                  <td {...cell.getCellProps()} style={{ padding: '10px', border: 'solid 1px gray' }}>
+                  <td {...cell.getCellProps()}>
                     {cell.render('Cell')}
                   </td>
                 ))}
@@ -226,7 +226,7 @@ const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
         </tbody>
       </table>
     </div>
-  );
+  );  
 };
 
 const AssetViewAll = () => {
@@ -252,8 +252,7 @@ const AssetViewAll = () => {
       const data = await response.json();
       if (response.ok) {
         toast.success("Assets successfully fetched!");
-        console.log("Fetched Assets:", data.assets); // Access assets from data.assets
-        setAssets(data.assets); // Update to use data.assets
+        setAssets(data.assets); // Update assets
       } else {
         throw new Error(data.error || 'Failed to fetch assets');
       }
@@ -271,7 +270,7 @@ const AssetViewAll = () => {
   
       return () => clearTimeout(timer); // Clean up the timer
     }
-  }, [needsFetch]);  
+  }, [needsFetch]);
 
   const openEditModal = (asset) => {
     setEditAsset(asset);   // Pass the asset to be edited
@@ -310,7 +309,6 @@ const AssetViewAll = () => {
   
       const data = await response.json();
       if (response.ok) {
-        console.log('Asset updated successfully:', data);
         closeModal(); // Close modal after successful edit
       } else {
         throw new Error(data.error || 'Failed to update asset');
@@ -322,23 +320,27 @@ const AssetViewAll = () => {
   };
 
   return (
-<div id="content">
-  <h3>All Assets</h3>
-  <div className="assets-container">
-    <AssetTable assets={assets} openEditModal={openEditModal} fetchAssets={fetchAssets} />
-  </div>
-  {modalOpen && (
-    <GenericModal
-      type={modalType} // 'asset' or 'service'
-      mode="edit" // Set mode to 'edit'
-      item={editAsset} // Pass the asset to be edited
-      onClose={closeModal} // Function to close modal
-      onSubmit={modalType === 'asset' ? handleEditSubmit : handleAddSubmit} // Function to handle submit
-      fetchAssets={fetchAssets} // Function to re-fetch assets
-    />
-  )}
-  <ToastContainer />
-</div>
+    <div id="content">
+      <h3>All Assets</h3>
+      {/* Counter showing total number of assets */}
+      <div className="asset-counter">
+        Total Assets: {assets.length}
+      </div>
+      <div className="assets-container">
+        <AssetTable assets={assets} openEditModal={openEditModal} fetchAssets={fetchAssets} />
+      </div>
+      {modalOpen && (
+        <GenericModal
+          type={modalType} // 'asset' or 'service'
+          mode="edit" // Set mode to 'edit'
+          item={editAsset} // Pass the asset to be edited
+          onClose={closeModal} // Function to close modal
+          onSubmit={modalType === 'asset' ? handleEditSubmit : handleAddSubmit} // Function to handle submit
+          fetchAssets={fetchAssets} // Function to re-fetch assets
+        />
+      )}
+      <ToastContainer />
+    </div>
   );
 };
 

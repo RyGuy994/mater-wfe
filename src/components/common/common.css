@@ -101,14 +101,21 @@ input:checked + .slider:before {
     padding: 20px; /* Padding for content */
 }
 
-/* Styles for standard table */
+/* Ensure table has enough space and proper layout */
 .standard-table {
-    width: 100%; /* Full width */
-    border-collapse: separate; /* Collapse border separately */
-    border-spacing: 0; /* No spacing between borders */
-    margin-top: 20px; /* Margin at the top */
-    border: 1px solid #ddd; /* Border color */
-    border-radius: 10px; /* Rounded corners */
+    width: 100%;
+    min-width: 600px; /* Ensure table doesn't collapse */
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+  }
+
+  /* Ensure the parent container has overflow settings */
+.standard-table-wrapper {
+    max-height: 90vh; /* Allow room for scrolling */
+    overflow-y: auto; /* Enable scrolling */
 }
 
 /* Styles for table header and data cells */
@@ -119,12 +126,16 @@ input:checked + .slider:before {
     text-align: left; /* Left align text */
 }
 
-/* Styles for table header */
+/* Adjust the sticky table header */
 .standard-table th {
+    position: sticky; /* Make the header sticky */
+    top: 0; /* Stick to the top of the container */
+    z-index: 10; /* Ensure it stays above the table content */
     background-color: #4CAF50; /* Green background color */
     color: white; /* White text color */
     font-weight: bold; /* Bold font weight */
     text-align: center; /* Center align text */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow for better visual separation */
 }
 
 /* Styles for table data */
@@ -158,7 +169,6 @@ input:checked + .slider:before {
 .standard-table tr:last-child td:last-child {
     border-bottom-right-radius: 10px; /* Rounded bottom right corner */
 }
-
 
 .drop-area {
     border: 2px dashed #ccc;
