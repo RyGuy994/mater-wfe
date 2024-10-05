@@ -44,8 +44,18 @@ const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
   
   const handleDownload = async (downloadAsset) => {
     try {
-      const response = await fetch(`${baseUrl}/assets/generate_zip/${downloadAsset.id}`);
+      const jwtToken = localStorage.getItem('jwt'); // Retrieve JWT from local storage
+      const response = await fetch(`${baseUrl}/assets/generate_zip/${downloadAsset.id}`, {
+        method: 'POST', 
+        headers: {
+          'Content-Type': 'application/json', 
+        },
+        body: JSON.stringify({ jwt: jwtToken }) 
+        
+      });
+  
       if (!response.ok) {
+        const errorText = await response.text();
         throw new Error('Failed to download ZIP file');
       }
   
@@ -63,7 +73,6 @@ const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
     }
   };
   
-
   const handleDelete = (asset) => {
     console.log('handleDelete called with asset:', asset);
     setAssetToDelete(asset);
