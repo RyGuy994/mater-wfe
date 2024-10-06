@@ -195,6 +195,10 @@ const ServiceViewAll = () => {
   return (
     <div id="content">
       <h3>All Services</h3>
+      {/* Counter showing total number of services */}
+      <div className="counter">
+        Total Services: {services.length}
+      </div>
       <ServiceTable services={services} />
       <ToastContainer />
     </div>
