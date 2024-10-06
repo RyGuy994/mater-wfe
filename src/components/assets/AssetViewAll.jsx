@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { useTable, useSortBy, useFilters } from 'react-table';
+import { useNavigate } from 'react-router-dom';
 import { matchSorter } from 'match-sorter';
 import '../common/common.css';
 import '../common/Modal.css';
@@ -34,7 +35,8 @@ const fuzzyTextFilterFn = (rows, id, filterValue) => {
 fuzzyTextFilterFn.autoRemove = val => !val;
 
 const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
-  console.log('AssetTable props:', assets); // Ensure assets are being passed correctly
+  console.log('AssetTable props:', assets);
+  const navigate = useNavigate(); // Initialize navigate
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [assetToDelete, setAssetToDelete] = useState(null);
   const [needsFetch, setNeedsFetch] = useState(true);
@@ -156,7 +158,11 @@ const AssetTable = ({ assets, openEditModal, fetchAssets }) => {
         Header: 'Actions',
         Cell: ({ row }) => (
           <div>
-            <button className="standard-btn" onClick={() => placeholder}>Asset Page</button>
+            <button 
+              className="standard-btn" 
+              onClick={() => navigate(`/asset-edit/${row.original.id}`)}>
+              Asset Page
+            </button>
             <button className="standard-btn" onClick={() => openEditModal(row.original)}>Quick Edit</button>
             <button className="standard-btn" onClick={() => handleDownload(row.original)}>Download</button>
             <button className="standard-del-btn" onClick={() => handleDelete(row.original)}>Delete</button>
@@ -332,7 +338,7 @@ const AssetViewAll = () => {
     <div id="content">
       <h3>All Assets</h3>
       {/* Counter showing total number of assets */}
-      <div className="asset-counter">
+      <div className="counter">
         Total Assets: {assets.length}
       </div>
       <div className="assets-container">
