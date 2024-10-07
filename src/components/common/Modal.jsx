@@ -1,4 +1,3 @@
-// GenericModal.jsx
 import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -7,6 +6,7 @@ import AssetAddForm from '../assets/AssetAddForm.jsx';
 import AssetEditForm from '../assets/AssetEditForm.jsx';
 import ServiceAddForm from '../services/ServiceAddForm.jsx';
 import AssetBulkUploadForm from '../assets/AssetBulkUploadForm.jsx';
+import NotesForm from '../notes/NotesForm.jsx'; // Import NotesForm
 
 const style = {
     position: 'absolute',
@@ -39,6 +39,8 @@ const GenericModal = ({ type, mode, item, onClose, onSubmit }) => {
                         ? `Edit ${type.charAt(0).toUpperCase() + type.slice(1)}`
                         : `Add ${type.charAt(0).toUpperCase() + type.slice(1)}`}
                 </Typography>
+
+                {/* Handling other forms */}
                 {type === 'asset' && mode === 'edit' && (
                     <AssetEditForm asset={item} onSubmit={handleSubmit} onClose={onClose} />
                 )}
@@ -48,9 +50,15 @@ const GenericModal = ({ type, mode, item, onClose, onSubmit }) => {
                 {type === 'service' && mode === 'add' && (
                     <ServiceAddForm onClose={onClose} onSubmit={handleSubmit} />
                 )}
-                {type === 'bulk-upload' && mode === 'add' && ( // Handle bulk upload correctly
+                {type === 'bulk-upload' && mode === 'add' && (
                     <AssetBulkUploadForm onClose={onClose} onSubmit={handleSubmit} />
                 )}
+
+                {/* Notes Form */}
+                {type === 'notes-asset' && (
+                    <NotesForm asset_Id={item} onClose={onClose} />
+                )}
+
                 <button className="standard-del-btn" onClick={onClose}>Close</button>
             </Box>
         </Modal>

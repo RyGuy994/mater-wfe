@@ -170,6 +170,26 @@ input:checked + .slider:before {
     border-bottom-right-radius: 10px; /* Rounded bottom right corner */
 }
 
+.notes-history {
+    max-height: 300px; /* Set a maximum height */
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding: 10px; /* Optional: Add padding for better spacing */
+    border: 1px solid #ddd; /* Optional: Add border for visual separation */
+    border-radius: 5px; /* Optional: Rounded corners */
+    }
+    .notes-history ul {
+        padding: 0; /* Remove padding from the UL itself */
+        list-style-type: none; /* Remove bullets from the list */
+    }
+    
+    .notes-history ul li {
+        padding: 12px; /* Padding inside each list item */
+        border: 1px solid #4CAF50; /* Border around each item */
+        margin-bottom: 10px; /* Add some space between items */
+        border-radius: 5px; /* Optional: rounded corners */
+        background-color: #f9f9f9; /* Optional: background color for each item */
+    }  
+
 .drop-area {
     border: 2px dashed #ccc;
     padding: 20px;
