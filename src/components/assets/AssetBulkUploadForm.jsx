@@ -24,30 +24,30 @@ const BulkAssetUploadForm = () => {
       toast.error('Please select a file to upload');
       return;
     }
-
+  
     const formData = new FormData();
     formData.append('bulk_file', file);
-
+  
     // Retrieve the JWT token from localStorage (or cookie)
-    const token = localStorage.getItem('jwt'); // Or use sessionStorage/cookies
+    const token = localStorage.getItem('jwt');
     if (!token) {
       toast.error('No authentication token found');
       return;
     }
-
-    formData.append('jwt', token);  // Append the token to the form data
-
+  
+    formData.append('jwt', token);
+  
     try {
       const baseUrl = import.meta.env.VITE_BASE_URL;
       const uploadUrl = `${baseUrl}/assets/upload_assets`;
-
+  
       const response = await fetch(uploadUrl, {
         method: 'POST',
         body: formData,
       });
-
+  
       const responseData = await response.json();
-
+  
       if (response.ok) {
         toast.success(responseData.message || 'Assets uploaded successfully');
         setFile(null); // Clear the file after successful upload
@@ -58,7 +58,7 @@ const BulkAssetUploadForm = () => {
       console.error('Failed to upload assets:', error.message);
       toast.error('Failed to upload assets');
     }
-  };
+  };  
 
   // Handle drag events for file drop area
   const handleDragOver = (e) => {
@@ -109,10 +109,10 @@ const BulkAssetUploadForm = () => {
             name="bulk_file"
             accept=".csv"
             onChange={handleFileChange}
-            required
             ref={fileInputRef} // Hidden file input reference
             style={{ display: 'none' }} // Hide the file input
           />
+
           {file ? (
             <p>{file.name}</p> // Show the name of the selected file
           ) : (

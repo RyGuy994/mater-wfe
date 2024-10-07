@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify'; // Importing toast notif
 import 'react-toastify/dist/ReactToastify.css'; // Importing toast styles
 import DeleteModal from '../common/DeleteModal.jsx'; // Importing DeleteModal component for asset deletion confirmation
 import { useNavigate, useParams } from 'react-router-dom'; // Importing hooks for navigation and URL parameters
+import GenericModal from '../common/Modal.jsx';
 
 const AssetEditPage = ({ onSubmit, onClose }) => {
   const { asset_id } = useParams(); // Get asset_id from the URL parameters
@@ -24,6 +25,11 @@ const AssetEditPage = ({ onSubmit, onClose }) => {
   const [isDragActive, setIsDragActive] = useState(false); // State to manage drag-and-drop status
   const [isSubmitting, setIsSubmitting] = useState(false); // State to indicate if the form is being submitted
   const [showDeleteModal, setShowDeleteModal] = useState(false); // State to control visibility of the delete confirmation modal
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editAsset, setEditAsset] = useState(null);  // For asset being edited
+  const [modalType, setModalType] = useState(null);  // To differentiate modal type
+  const [needsFetch, setNeedsFetch] = useState(false); // If you need to refetch after modal
+
   const [assetToDelete, setAssetToDelete] = useState(null); // State to hold the asset ID to be deleted
   const fileInputRef = useRef(null); // Reference for the file input element
   const baseUrl = import.meta.env.VITE_BASE_URL; // Base URL for API requests, fetched from environment variables
@@ -206,6 +212,18 @@ const AssetEditPage = ({ onSubmit, onClose }) => {
     }
   };
   
+  const closeModal = () => {
+    console.log('Closing modal...');
+    setModalOpen(false);
+    setEditAsset(null);
+    setModalType(null);
+    setNeedsFetch(true); // This is for refetching data if needed
+  };
+
+  const openNotesModal = () => {
+    setModalOpen(true); // Set to open modal
+    setModalType('notes-asset'); // Set the type of modal if you want to handle it
+};
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -295,8 +313,17 @@ const AssetEditPage = ({ onSubmit, onClose }) => {
         onClose={() => setShowDeleteModal(false)} // Close modal on cancel
         onConfirm={confirmDelete} // Confirm delete on modal confirm button
       />
+      {modalOpen && (
+        <GenericModal
+          type='notes-asset'
+          mode="add"  
+          item={asset_id} // Pass the asset_id
+          onClose={closeModal} // Close modal function
+        />
+      )}
       <h3>Edit Asset</h3>
       <button className="standard-btn" onClick={() => handleDownload(asset_id)}>Download</button>
+      <button className="standard-btn" onClick={openNotesModal}>View Asset's Notes</button>
       <button className="standard-del-btn" onClick={() => handleDelete(asset_id)}>Delete</button>
       <form onSubmit={handleSubmit}>
       <label htmlFor="image">Asset Image:</label>
