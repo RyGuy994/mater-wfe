@@ -2,13 +2,15 @@
 
 /* Style the form container */
 .form-container {
-    max-width: 400px; /* Set maximum width for the form */
-    margin: 0 auto; /* Center the form horizontally */
-    padding: 20px; /* Add some padding around the form */
-    border: 1px solid #ccc; /* Add a border around the form */
-    border-radius: 8px; /* Add some border radius for rounded corners */
-    background-color: #f9f9f9; /* Set background color for the form */
-  }
+  max-width: 400px; /* Set maximum width for the form */
+  margin: 0 auto; /* Center the form horizontally */
+  padding: 20px; /* Add some padding around the form */
+  border: 1px solid #ccc; /* Add a border around the form */
+  border-radius: 8px; /* Add some border radius for rounded corners */
+  background-color: #f9f9f9; /* Set background color for the form */
+  max-height: 80vh;
+  overflow-y: auto;
+}
   
   /* Style the form inputs */
   .form-input {
@@ -25,7 +27,7 @@
     display: inline-block;
   }
   
-  .custom-dropdown-content {
+  .custom-dropdown-content { 
     display: none;
     position: absolute;
     background-color: #f9f9f9;

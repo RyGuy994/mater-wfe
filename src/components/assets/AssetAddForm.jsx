@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../common/form.css';
 import '../common/common.css';
+import '../common/form.css';
 import ConfirmationModal from '../common/ConfirmationModal';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -182,7 +182,12 @@ const AssetAddForm = ({ onClose }) => {
     <div className="form-container">
       <h3>Add New Asset</h3>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="name">Asset Name:</label>
+        <label htmlFor="name">
+          Asset Name:
+          <span className="tooltip" data-tooltip="Friendily name of the asset.">
+            ⓘ
+          </span>
+        </label>
         <input
           type="text"
           id="name"
@@ -193,7 +198,12 @@ const AssetAddForm = ({ onClose }) => {
           required
         />
 
-        <label htmlFor="asset_sn">Asset Serial Number:</label>
+        <label htmlFor="asset_sn">
+          Asset Serial Number:
+          <span className="tooltip" data-tooltip="Serial Number or Unique Identifier.">
+            ⓘ
+          </span>
+        </label>
         <input
           type="text"
           id="asset_sn"
@@ -204,7 +214,12 @@ const AssetAddForm = ({ onClose }) => {
           required
         />
 
-        <label htmlFor="description">Description:</label>
+        <label htmlFor="description">
+          Description:
+          <span className="tooltip" data-tooltip="Description of asset.">
+            ⓘ
+          </span>
+        </label>
         <textarea
           id="description"
           name="description"
@@ -214,7 +229,12 @@ const AssetAddForm = ({ onClose }) => {
           required
         />
 
-        <label htmlFor="acquired_date">Acquired Date:</label>
+        <label htmlFor="acquired_date">
+          Acquired Date:
+          <span className="tooltip" data-tooltip="Date asset was Acquired">
+            ⓘ
+          </span>
+        </label>
         <input
           type="date"
           id="acquired_date"
@@ -225,7 +245,12 @@ const AssetAddForm = ({ onClose }) => {
           required
         />
 
-        <label htmlFor="asset_status">Asset Status:</label>
+        <label htmlFor="asset_status">
+          Asset Status:
+          <span className="tooltip" data-tooltip="Status of asset. To make/edit global settings, please go to Settings > Global Settings. To make/edit local settings, go to Settings > Local Settings.">
+            ⓘ
+          </span>
+        </label>
         <select
           id="asset_status"
           name="asset_status"
@@ -241,7 +266,12 @@ const AssetAddForm = ({ onClose }) => {
           ))}
         </select>
 
-        <label htmlFor="image">Asset Image:</label>
+        <label htmlFor="image">
+          Asset Image:
+          <span className="tooltip" data-tooltip="Image of the asset.">
+            ⓘ
+          </span>
+        </label>
         <div
           className={`drop-area ${isDragActive ? 'highlight' : ''}`}
           onDragOver={handleDragOver}
