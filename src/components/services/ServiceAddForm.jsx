@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../common/form.css';
 import '../common/common.css';
+import '../common/form.css';
 import ConfirmationModal from '../common/ConfirmationModal';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -17,12 +17,10 @@ const ServiceAddForm = ({ onClose }) => {
     asset_id: '',
     service_type: '',
     service_date: currentDate,
-    service_cost: '',
     service_status: '',
-    service_notes: '',
     service_add_again_check: false,
     service_add_again_days_cal: '',
-    attachments: null,
+    attachments: [],
   });
   const [errorMessage, setErrorMessage] = useState('');
   const [attachmentsPreview, setAttachmentsPreview] = useState([]);
@@ -115,18 +113,15 @@ const ServiceAddForm = ({ onClose }) => {
         }
   
         const assetsData = await response.json();
-        console.log('Assets data:', assetsData); // Check the assets data
+        console.log('Assets data:', assetsData);
   
-        // You need to access the 'assets' key from the response
         const assetsArray = assetsData.assets;
-  
-        // Ensure that assetsArray is indeed an array before setting it
         if (Array.isArray(assetsArray)) {
-          setAssets(assetsArray);  // Set assets state with the array
-          setFilteredAssets(assetsArray); // Also set filteredAssets
+          setAssets(assetsArray);
+          setFilteredAssets(assetsArray);
         } else {
           console.error('Assets data is not an array:', assetsArray);
-          setAssets([]); // Set empty array if data is not in expected format
+          setAssets([]);
         }
       } catch (error) {
         console.error('Error during fetch operation:', error);
@@ -137,14 +132,8 @@ const ServiceAddForm = ({ onClose }) => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    const newValue = type === 'file' ? e.target.files : (type === 'checkbox' ? checked : value);
+    const newValue = type === 'checkbox' ? checked : value;
     setServiceData({ ...serviceData, [name]: newValue });
-
-    if (type === 'file') {
-      const files = Array.from(e.target.files);
-      const previews = files.map(file => URL.createObjectURL(file));
-      setAttachmentsPreview(previews);
-    }
   };
 
   const handleSearchChange = (e) => {
@@ -168,13 +157,12 @@ const ServiceAddForm = ({ onClose }) => {
         formData.append(key, serviceData[key]);
       }
     }
-    formData.append('jwt', jwtToken);
+    
+    serviceData.attachments.forEach(file => {
+      formData.append('attachments', file);
+    });
 
-    if (serviceData.attachments) {
-      Array.from(serviceData.attachments).forEach(file => {
-        formData.append('attachments', file);
-      });
-    }
+    formData.append('jwt', jwtToken);
 
     try {
       const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -205,12 +193,10 @@ const ServiceAddForm = ({ onClose }) => {
       asset_id: '',
       service_type: '',
       service_date: currentDate,
-      service_cost: '',
       service_status: '',
-      service_notes: '',
       service_add_again_check: false,
       service_add_again_days_cal: '',
-      attachments: null,
+      attachments: [],
     });
     setAttachmentsPreview([]);
   };
@@ -221,11 +207,28 @@ const ServiceAddForm = ({ onClose }) => {
     navigate('/services-view-all');
   };
 
-  const addDaysToDate = (addDays) => {
-    const today = new Date();
-    const newDate = new Date(today.setDate(today.getDate() + addDays));
-    const formattedDate = newDate.toISOString().split('T')[0];
-    setServiceData({ ...serviceData, service_add_again_days_cal: formattedDate });
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files);
+    setServiceData(prevData => ({
+      ...prevData,
+      attachments: [...prevData.attachments, ...files],
+    }));
+
+    const previews = files.map(file => URL.createObjectURL(file));
+    setAttachmentsPreview(prev => [...prev, ...previews]);
+  };
+
+  const handleRemoveAttachment = (index) => {
+    const newAttachments = serviceData.attachments.filter((_, i) => i !== index);
+    const newPreviews = attachmentsPreview.filter((_, i) => i !== index);
+    URL.revokeObjectURL(attachmentsPreview[index]); // Revoke the object URL for cleanup
+    setServiceData(prevData => ({ ...prevData, attachments: newAttachments }));
+    setAttachmentsPreview(newPreviews);
   };
 
   const handleAssetSelect = (assetId) => {
@@ -239,7 +242,12 @@ const ServiceAddForm = ({ onClose }) => {
     <div className="form-container">
       <h3>Add New Service</h3>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="asset_id" className="required-field">Asset Name:</label>
+        <label htmlFor="asset_id" className="required-field">
+          Asset Name:
+          <span className="tooltip" data-tooltip="The Asset that the service is for. Start typing to filter the assets.">
+            ⓘ
+          </span>
+        </label>
         <input
           type="text"
           id="asset_search"
@@ -263,7 +271,12 @@ const ServiceAddForm = ({ onClose }) => {
           </ul>
         )}
         <br />
-        <label htmlFor="service_type" className="required-field">Service Type:</label>
+        <label htmlFor="service_type" className="required-field">
+          Service Type:
+          <span className="tooltip" data-tooltip="Type of Service. To make/edit global settings, please go to Settings > Global Settings. To make/edit local settings, go to Settings > Local Settings.">
+            ⓘ
+          </span>
+        </label>
         <select
           id="service_type"
           name="service_type"
@@ -277,7 +290,12 @@ const ServiceAddForm = ({ onClose }) => {
             <option key={index} value={type}>{type}</option>
           ))}
         </select><br />
-        <label htmlFor="service_date" className="required-field">Service Date:</label>
+        <label htmlFor="service_date" className="required-field">
+          Service Date:
+        <span className="tooltip" data-tooltip="Date the Service accured">
+            ⓘ
+        </span>
+        </label>
         <input
           type="date"
           id="service_date"
@@ -288,17 +306,12 @@ const ServiceAddForm = ({ onClose }) => {
           required
         />
         <br />
-        <label htmlFor="service_cost" className="required-field">Service Cost:</label>
-        <input
-          type="number"
-          id="service_cost"
-          name="service_cost"
-          className="form-input"
-          value={serviceData.service_cost}
-          onChange={handleChange}
-          required
-        /><br />
-        <label htmlFor="service_status" className="required-field">Service Status:</label>
+        <label htmlFor="service_status" className="required-field">
+          Service Status: 
+          <span className="tooltip" data-tooltip="Status of Service. To make/edit global settings, please go to Settings > Global Settings. To make/edit local settings, go to Settings > Local Settings.">
+            ⓘ
+          </span>
+        </label>
         <select
           id="service_status"
           name="service_status"
@@ -312,30 +325,54 @@ const ServiceAddForm = ({ onClose }) => {
             <option key={index} value={status}>{status}</option>
           ))}
         </select><br />
-        <label htmlFor="service_notes">Service Notes:</label>
-        <textarea
-          id="service_notes"
-          name="service_notes"
-          className="form-input"
-          value={serviceData.service_notes}
-          onChange={handleChange}
-        ></textarea><br />
-        <label htmlFor="attachments">Attachments:</label>
-        <input
-          type="file"
-          id="attachments"
-          name="attachments"
-          className="form-input"
-          onChange={handleChange}
-          multiple
-        /><br />
-        {attachmentsPreview.map((preview, index) => (
-          <img
-            key={index}
-            src={preview}
-            alt={`Attachment preview ${index}`}
-            className="attachment-preview"
+        <label htmlFor="attachments" className="required-field">
+          Attachments:
+          <span className="tooltip" data-tooltip="This is for Attachments that go with this service.">
+            ⓘ
+          </span>
+        </label>
+        <div
+          className="drop-area"
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onClick={() => document.getElementById('attachments').click()}
+        >
+          <p>Drag & drop files here, or click to select files</p>
+          <input
+            type="file"
+            id="attachments"
+            name="attachments"
+            className="form-input"
+            onChange={(e) => {
+              const files = Array.from(e.target.files);
+              setServiceData(prevData => ({
+                ...prevData,
+                attachments: [...prevData.attachments, ...files],
+              }));
+
+              const previews = files.map(file => URL.createObjectURL(file));
+              setAttachmentsPreview(prev => [...prev, ...previews]);
+            }}
+            multiple
+            style={{ display: 'none' }} // Hide the default input
           />
+        </div>
+        <br />
+        {attachmentsPreview.map((preview, index) => (
+          <div key={index} className="attachment-preview-container">
+            <img
+              src={preview}
+              alt={`Attachment preview ${index}`}
+              className="attachment-preview"
+            />
+            <button
+              type="button"
+              className="remove-attachment-btn"
+              onClick={() => handleRemoveAttachment(index)}
+            >
+              X
+            </button>
+          </div>
         ))}
         <br />
         <button type="submit" className="standard-btn">Add Service</button>

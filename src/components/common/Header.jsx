@@ -1,20 +1,19 @@
 // Import React and necessary hooks
 import React, { useState } from 'react';
-
-// Import Link from React Router
-import { Link } from 'react-router-dom';
-
+// Import Link and useLocation from React Router
+import { Link, useLocation } from 'react-router-dom';
 // Import CSS file for styling
 import './Header.css';
-
 // Import Mater image
 import materImage from '../static/favicon-16x16.png';
-
 // Import Modal component
 import Modal from '../common/Modal';
 
 // Header component
 const Header = ({ isLoggedIn, handleLogout }) => {
+  // Get current location
+  const location = useLocation();
+
   // State to manage modal visibility and type
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState(null); // 'asset', 'service', or 'bulk-upload'
@@ -42,6 +41,11 @@ const Header = ({ isLoggedIn, handleLogout }) => {
     setModalOpen(false);
     setModalType(null);
   };
+
+  // Render nothing if the current path is '/' or '/login'
+  if (location.pathname === '/' || location.pathname === '/login') {
+    return null; // Do not render the header
+  }
 
   return (
     <div className="header-container">

@@ -28,6 +28,7 @@
   justify-content: center; /* Center align items vertically */
   font-size: calc(10px + 2vmin); /* Responsive font size based on viewport */
   color: white; /* Set text color to white */
+  z-index: 1000;
 }
 
 /* Styles for links within the application */

@@ -51,12 +51,6 @@ const ServiceTable = ({ services }) => {
         filter: 'fuzzyText',
       },
       {
-        Header: 'Service Cost',
-        accessor: 'service_cost',
-        Filter: DefaultColumnFilter,
-        filter: 'fuzzyText',
-      },
-      {
         Header: 'Service Status',
         accessor: 'service_status',
         Filter: DefaultColumnFilter,

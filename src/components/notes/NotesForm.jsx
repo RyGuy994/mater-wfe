@@ -18,7 +18,12 @@ const NotesForm = ({ asset_Id, jwtToken }) => {
   jwtToken = localStorage.getItem('jwt');
 
   useEffect(() => {
+    const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
     fetchNotes();
+    setNoteData((prevData) => ({
+      ...prevData,
+      note_date: today,
+    }))
   }, [asset_Id]);
 
   const fetchNotes = async () => {
@@ -99,7 +104,8 @@ const NotesForm = ({ asset_Id, jwtToken }) => {
       if (response.ok) {
         toast.success('Note saved successfully!');
         fetchNotes();
-        setNoteData({ note_date: '', note_data: '' });
+        const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+        setNoteData({ note_date: today, note_data: '' });
         setEditingNoteId(null);
       } else {
         const errorData = await response.json().catch(() => null);
@@ -158,23 +164,42 @@ const NotesForm = ({ asset_Id, jwtToken }) => {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <input
-          type="date"
-          name="note_date"
-          className="form-input"
-          value={noteData.note_date}
-          onChange={handleInputChange}
-          required
-        />
+        <div>
+          <label htmlFor="note_date">
+            Note Date:
+            <span className="tooltip" data-tooltip="Date of the note.">
+            ⓘ
+            </span>
+          </label>
+          <input
+            type="date"
+            id="note_date"
+            name="note_date"
+            className="form-input"
+            value={noteData.note_date}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
         <br />
-        <textarea
-          name="note_data"
-          className="form-input"
-          value={noteData.note_data}
-          onChange={handleInputChange}
-          placeholder="Enter your note here..."
-          required
-        />
+        <div>
+          <label htmlFor="note_data">
+            Note:
+            <span className="tooltip" data-tooltip="Content of the note.">
+            ⓘ
+            </span>
+          </label>
+          <textarea
+            id="note_data"
+            name="note_data"
+            className="form-input"
+            value={noteData.note_data}
+            onChange={handleInputChange}
+            placeholder="Enter your note here..."
+            required
+          />
+        </div>
+        <br />
         <button type="submit" className="standard-btn" disabled={loading}>
           {editingNoteId ? 'Update Note' : '+ Add New Note'}
         </button>

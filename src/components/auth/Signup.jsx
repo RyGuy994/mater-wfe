@@ -1,9 +1,12 @@
-// src/components/auth/SIgnup.jsx
+// src/components/auth/Signup.jsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './Login.css'; // Import the CSS file
-import '../common/common.css'; // Import the CSS file for standard
-import materImage from '../static/MATER.png'; // Import the image file
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './Login.css';
+import '../common/common.css';
+import materImage from '../static/MATER.png';
+
 
 const Signup = () => {
   const [formData, setFormData] = useState({ username: '', password: '', confirmPassword: '' });
@@ -22,12 +25,10 @@ const Signup = () => {
       if (formData.password !== formData.confirmPassword) {
         throw new Error('Passwords do not match');
       }
-
-      // Get the base URL from the environmental variable
+  
       const baseUrl = import.meta.env.VITE_BASE_URL;
-      // Construct the full URL for the signup endpoint
       const signupUrl = `${baseUrl}/auth/signup`;
-
+  
       const response = await fetch(signupUrl, {
         method: 'POST',
         headers: {
@@ -38,37 +39,39 @@ const Signup = () => {
           password: formData.password,
         }),
       });
-
+  
       const responseData = await response.json();
-      console.log(responseData);
-
+  
       if (response.ok) {
-        // Redirect to the login page after successful signup
         navigate('/login');
       } else {
         throw new Error(responseData.error || 'Signup failed');
       }
     } catch (error) {
       console.error('Signup failed:', error.message);
-      setErrorMessage(error.message);
+      toast.error(error.message); // Display the error as a toast
     }
-  };
+  };  
 
   return (
-    <div>
+    <div className="login">
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
       <h2 className="cool-text" data-text="MATER">
         MATER
       </h2>
+      <div className="cool-text-subtitle">
+        <span className="word">Hello! You must be new here. </span>
+      </div>
       <img src={materImage} alt="MATER" className="center" />
       <h3>Signup</h3>
-      <form onSubmit={handleSubmit}>
-        {/* Input fields for username and password */}
+      <form onSubmit={handleSubmit} className="login-form">
         <input
           type="text"
           name="username"
           value={formData.username}
           onChange={handleChange}
           placeholder="Username"
+          className="login-input"
         />
         <br />
         <input
@@ -77,6 +80,7 @@ const Signup = () => {
           value={formData.password}
           onChange={handleChange}
           placeholder="Password"
+          className="login-input"
         />
         <br />
         <input
@@ -85,20 +89,19 @@ const Signup = () => {
           value={formData.confirmPassword}
           onChange={handleChange}
           placeholder="Confirm Password"
+          className="login-input"
         />
         <br />
         <button type="submit" className="standard-btn">
           Signup
         </button>
       </form>
-      {errorMessage && <div>{errorMessage}</div>}
-
-      {/* Link to the login page */}
-      <Link to="/login" className="standard-btn">
+      <Link to="/login" className="standard-btn signup-btn">
         Go to Login
       </Link>
     </div>
   );
+  
 };
 
 export default Signup;
