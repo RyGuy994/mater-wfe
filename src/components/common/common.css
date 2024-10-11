@@ -24,6 +24,15 @@
   background-color: var(--primary-color-hover) !important; /* Uses the slightly darker shade of primary color */
 }
 
+.standard-action-zone{
+    border: 1px solid var(--primary-color); /* Light gray border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px; /* Space inside the box */
+    margin: 10px 0; /* Space outside the box */
+    background-color: #ddd; /* Light background color for better contrast */
+  
+}
+
 /* Styling for standard delete button */
 .standard-del-btn {
     padding: 10px 20px; /* Padding for button */

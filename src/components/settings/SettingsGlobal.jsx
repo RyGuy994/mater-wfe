@@ -315,73 +315,70 @@ const SettingsGlobal = () => {
             onChange={(e) => setNewSetting({ ...newSetting, value: e.target.value })}
           />
         </label>
-        <label>
-          Global:
-          <input
-            type="checkbox"
-            checked={newSetting.globalsetting}
-            onChange={(e) => setNewSetting({ ...newSetting, globalsetting: e.target.checked })}
-          />
-        </label>
         <button className="standard-btn" type="submit">Add Setting</button>
       </form>
       <table>
-        <thead>
-          <tr>
-            <th>Setting</th>
-            <th>Value</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {settings.map(setting => (
-            <tr key={setting.id}>
-              <td>{setting.whatfor}</td>
-              <td>
-                {editMode === setting.id ? (
-                  <input
-                    type="text"
-                    value={editValue}
-                    onChange={(e) => setEditValue(e.target.value)}
+  <thead>
+    <tr>
+      <th>Setting</th>
+      <th>Value</th>
+      <th>Global Setting</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {settings.map(setting => (
+      <tr key={setting.id}>
+        <td>{setting.whatfor}</td>
+        <td>
+          {editMode === setting.id ? (
+            <input
+              type="text"
+              value={editValue}
+              onChange={(e) => setEditValue(e.target.value)}
+            />
+          ) : (
+            <span>
+              {['allowselfregister', 'global_service_status', 'global_asset_status', 'global_service_type'].includes(setting.whatfor) ? (
+                <label className="switch">
+                  <input 
+                    type="checkbox" 
+                    checked={setting.value === 'Yes'} 
+                    onChange={() => handleToggle(setting.id, setting.value)} 
                   />
-                ) : (
-                  <span>
-                    {['allowselfregister', 'global_service_status', 'global_asset_status', 'global_service_type'].includes(setting.whatfor) ? (
-                      <label className="switch">
-                        <input 
-                          type="checkbox" 
-                          checked={setting.value === 'Yes'} 
-                          onChange={() => handleToggle(setting.id, setting.value)} 
-                        />
-                        <span className="slider round"></span>
-                      </label>
-                    ) : (
-                      setting.value
-                    )}
-                  </span>
-                )}
-              </td>
-              <td>
-                {['service_status', 'asset_status', 'service_type'].includes(setting.whatfor) && (
-                  <>
-                    {editMode === setting.id ? (
-                      <>
-                        <button className="standard-btn" onClick={() => handleEdit(setting.id)}>Save</button>
-                        <button className="standard-btn" onClick={() => { setEditMode(null); setEditValue(''); }}>Cancel</button>
-                      </>
-                    ) : (
-                      <>
-                        <button className="standard-btn" onClick={() => { setEditMode(setting.id); setEditValue(setting.value); }}>Edit</button>
-                        <button className="standard-del-btn" onClick={() => handleDelete(setting.id)}>Delete</button>
-                      </>
-                    )}
-                  </>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                  <span className="slider round"></span>
+                </label>
+              ) : (
+                setting.value
+              )}
+            </span>
+          )}
+        </td>
+        <td>
+          {/* Displaying the global setting status */}
+          {setting.globalsetting ? 'Yes' : 'No'}
+        </td>
+        <td>
+          {['service_status', 'asset_status', 'service_type'].includes(setting.whatfor) && (
+            <>
+              {editMode === setting.id ? (
+                <>
+                  <button className="standard-btn" onClick={() => handleEdit(setting.id)}>Save</button>
+                  <button className="standard-btn" onClick={() => { setEditMode(null); setEditValue(''); }}>Cancel</button>
+                </>
+              ) : (
+                <>
+                  <button className="standard-btn" onClick={() => { setEditMode(setting.id); setEditValue(setting.value); }}>Edit</button>
+                  <button className="standard-del-btn" onClick={() => handleDelete(setting.id)}>Delete</button>
+                </>
+              )}
+            </>
+          )}
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
       <DeleteModal
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}

@@ -6,7 +6,8 @@ import AssetAddForm from '../assets/AssetAddForm.jsx';
 import AssetEditForm from '../assets/AssetEditForm.jsx';
 import ServiceAddForm from '../services/ServiceAddForm.jsx';
 import AssetBulkUploadForm from '../assets/AssetBulkUploadForm.jsx';
-import NotesForm from '../notes/NotesForm.jsx'; // Import NotesForm
+import NotesForm from '../notes/NotesForm.jsx';
+import CostsForm from '../costs/CostsForm.jsx';
 
 const style = {
     position: 'absolute',
@@ -59,6 +60,11 @@ const GenericModal = ({ type, mode, item, onClose, onSubmit }) => {
                 {/* Notes Form */}
                 {type === 'notes-asset' && (
                     <NotesForm asset_Id={item} onClose={onClose} />
+                )}
+
+                {/* Notes Form */}
+                {type === 'costs-asset' && (
+                    <CostsForm asset_Id={item} onClose={onClose} />
                 )}
 
                 <button className="standard-del-btn" onClick={onClose}>Close</button>
