@@ -225,6 +225,11 @@ const AssetEditPage = ({ onSubmit, onClose }) => {
     setModalType('notes-asset'); // Set the type of modal if you want to handle it
 };
 
+  const openCostsModal = () => {
+    setModalOpen(true); // Set to open modal
+    setModalType('costs-asset'); // Set the type of modal if you want to handle it
+};
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -315,16 +320,28 @@ const AssetEditPage = ({ onSubmit, onClose }) => {
       />
       {modalOpen && (
         <GenericModal
-          type='notes-asset'
+          type={modalType}
           mode="add"  
           item={asset_id} // Pass the asset_id
           onClose={closeModal} // Close modal function
         />
       )}
-      <h3>Edit Asset</h3>
+      {modalOpen && (
+        <GenericModal
+          type={modalType}
+          mode="add"  
+          item={asset_id} // Pass the asset_id
+          onClose={closeModal} // Close modal function
+        />
+      )}
+      <h3>Asset Page - Edit/View</h3>
+      <div className="standard-action-zone">
+      <h4>Asset Action Zone</h4>
       <button className="standard-btn" onClick={() => handleDownload(asset_id)}>Download</button>
-      <button className="standard-btn" onClick={openNotesModal}>View Asset's Notes</button>
+      <button className="standard-btn" onClick={openNotesModal}>Notes</button>
+      <button className="standard-btn" onClick={openCostsModal}>Costs</button>
       <button className="standard-del-btn" onClick={() => handleDelete(asset_id)}>Delete</button>
+      </div>
       <form onSubmit={handleSubmit}>
       <label htmlFor="image">Asset Image:</label>
         <div
