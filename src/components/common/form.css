@@ -17,7 +17,7 @@
     width: 100%; /* Set width to 100% of the container */
     margin-bottom: 10px; /* Add some spacing between inputs */
     padding: 10px; /* Add padding for better visual appearance */
-    border: 1px solid #ccc; /* Add a border around inputs */
+    border: 1px solid var(--primary-color); /* Add a border around inputs */
     border-radius: 4px; /* Add some border radius for rounded corners */
   }
   

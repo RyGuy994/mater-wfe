@@ -67,7 +67,7 @@ function App() {
     const savedColor = localStorage.getItem('primaryColor') || '#4CAF50';
     document.documentElement.style.setProperty('--primary-color', savedColor);
 
-    const hoverColor = adjustColor(savedColor, -20);
+    const hoverColor = localStorage.getItem('primaryColorHover') || '#388E3C';
     document.documentElement.style.setProperty('--primary-color-hover', hoverColor);
     console.log('Primary Color:', savedColor);
     console.log('Primary Color Hover:', hoverColor);
