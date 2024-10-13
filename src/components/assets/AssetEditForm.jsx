@@ -1,8 +1,8 @@
 /* src/components/assets/AssetEditForm.jsx */
 
 import React, { useState, useEffect, useRef } from 'react';
-import '../common/form.css'; // Use form.css for styling
 import '../common/common.css';
+import '../common/form.css'; // Use form.css for styling
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
@@ -274,25 +274,24 @@ const AssetEditForm = ({ asset, onSubmit, onClose }) => {
             style={{ display: 'none' }} // Hide the file input
             aria-label="Upload an image for the asset"
           />
-          {imagePreview ? (
-            <div className="image-preview-container">
-              <img
-                src={imagePreview}
-                alt="Image Preview"
-                className="image-preview"
-                style={{ maxWidth: '200px', maxHeight: '200px', border: '3px solid green', marginBottom: '10px' }}
-              />
-              <button
-                type="button"
-                className="remove-image-btn"
-                onClick={handleRemoveImage}
-              >
-                X
-              </button>
-            </div>
-          ) : (
-            <p>Drag & drop an image or click to upload</p>
-          )}
+            {imagePreview ? (
+              <div className="image-preview-container">
+                <img
+                  src={imagePreview}
+                  alt="Image Preview"
+                  className="image-preview"
+                />
+                <button
+                  type="button"
+                  className="remove-image-btn"
+                  onClick={handleRemoveImage}
+                >
+                  X
+                </button>
+              </div>
+            ) : (
+              <p>Drag & drop an image or click to upload</p>
+            )}
         </div><br />
         <button type="submit" className="standard-btn" disabled={isSubmitting}>
           {isSubmitting ? 'Saving...' : 'Save'}
